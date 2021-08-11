@@ -1,31 +1,31 @@
 \section*{Introduction}
 
--	Text on techniques for plastic identification (Koch)
--	One technique: Photoluminescence
--	Ornik et al.: Identification of plastics with intensity ratios
--	PL spectra of a single sample can vary
-o	Setup related factors: equipment, alignment. Source
-o	Identifications based on intensities at specific wavelengths lead to errors
--	Central question: Is there a robust plastic identification method with heterogeneous PL spectral data?
-o	Robust = achieve high identification accuracies despite data heterogeneities
-o	Look ONLY at heterogeneities due to experimental variations
--	Use machine learning (ML)
-o	The ML model generation consists of two steps:
-	Provide the data for model training
-	Select a learning method to train the model, e.g. neuronal networks
-o	Let computer identify patterns for plastic identification
-	Look at two learning methods: spectral and SDCM
-•	Spectral: use all information in the spectrum
-•	SDCM: use correlations identified by computer
-o	Proved to be superior to PCA Source
-o	Feed patterns to the learning models
-o	Use 6 different learning models
+Plastic materials are an integral part of modern society due the sheer endless application possibilities.
+Yet, due to the lack of recycling measurements vast amounts of plastic waste end up uncontrollably in our environment.
+Numerous studies revealed to us the impact of this unstoppable plastic pollution: microplastics derived from plastic waste can be found marine lifeforms.
+Only recently, further studies found microplastics in human stool and the human placenta with unknown long-term effects. 
 
+To trace back the different pathways of microplastic into the human body, we need identification techniques that allow us to identify and classify plastic waste at different stages.
+Here, Raman and FTIR spectroscopy are commonly used in plastic pollution studies due to the availablity of commercial systems.
+At the same time, plastic pollution samples are highly diverse due to environmental influences and the sheer endless combinations to produce plastic.
+Due to the physical limitations of each aformentioned technqiue, it is forseeable that each technique only work for a subset of plastic waste.
+Consquently, additional techniques are required to cover in particular those plastic waste types are currently not covered.
+A recent study by Ornik et al. [XXXREF] demonstrated that photoluminescence is a suitable technique to identify plastics from other materials that occur in the riverine environment.
 
-Struct:
-Introdction to Application
-Benefit of ML
-Shortcomings of other classifier
-Challenges for classification
-Previous work
-This work
+Compared to the previous techniques, photoluminescence (PL) stands out for its simplicity.
+A basic setup consists of only two components, namely a monochromatic laser and spectrometer, which makes it a globally accessible technique for microplastic identification.
+However, the simplicity of the basic setup also raises questions about the comparability of different spectral data.
+Even if a sample is measured by two setups with identical hardware, the acquired spectra can look different because of different alignments, sample sites or even scientific experiences.
+Thus, while measurements should always be taken at laboratory conditions, this cannot be always fulfilled and raises the question for other identification methods that can be used instead.
+One possible solution is to take advantage of the fact that large sets of data can be generated due to the simplicity of the setup.
+Once integrated in a library, computer algorithms and models can be developed to help unraveling the origins of the plastic sample.
+
+Today, we have a choice over a vast amount of computational methods that could be used for plastic classification.
+Amongst them, machine learning models are the most popular ones with many established methods available to the public.
+Generating a machine learning model consists of two steps: first, we identify patterns on a selected dataset and second, we select a learning model to use these patterns and identify the plastic samples.
+Since different combinations of methods can be used to do both steps, it is not clear if the chosen method can work with high accuracies, i.e. the probability that a model based prediction is correct, in the presence of data heterogeneities due to experimental variations.
+
+Here, we look at two different methods to identify patterns.
+The first one uses all information from a single spectrum while the second one uses a method known as signal dissection by correlation maximization (SDCM).
+The latter has the advantage that physically meaningful patterns can be extracted.
+Our study shows that, machine learning models based on SDCM are more robust towards experimental heterogoneities.
