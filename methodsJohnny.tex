@@ -18,17 +18,18 @@ To ensure that the excitation beam is completely removed from the emission path 
 Once filtered, the beam passes through a lens that focusses the light onto an optical fibre which directs the light to a spectrometer (LR2, Lasertack GmbH).
 
 Both the laser and the spectrometer are controlled with a microcontroller which, in turn, is connected to a pc.
-This arrangement makes it possible to control the laser power, illumination time and the delay time to start acquiring the spectrum.
+This arrangement makes it possible to control the laser power, excitation time and the delay time to start acquiring the spectrum.
 The latter is set to \si{500}{ms}.
 \subsection*{Samples and measurement parameters}
 \begin{table}[ht]
 	\centering
-	\begin{tabular}{*6l}
+	\begin{tabular}{|l*{5}{|c}|}
 		\hline
-		Sample Type & Number of Samples & \multicolumn{2}{c}{Measurement 1} & \multicolumn{2}{c}{Measurement 2}\\
-		{}& {} & Laser Power [mW] & Illumination Time [ms] & Laser Power [mW] & Illumination Time [ms]\\
+		Sample Type & No. of Samples & \multicolumn{2}{c|}{Measurement 1} & \multicolumn{2}{c|}{Measurement 2}\\
+		\cline{3-6}
+		{}& {} & $\mathrm{P_{laser}}$ [mW] & $\mathrm{t_{ex}}$ [ms] & $\mathrm{P_{laser}}$ [mW] & $\mathrm{t_{ex}}$ [ms]\\
 		\hline
-		Non-plastic & 12 & 0.5\textendash130 & 300 & 0.2\textendash2.8 & \\
+		Non-plastic & 12 & 0.5\textendash130 & 300 & 0.2\textendash2.8 & 300\\
 		\hline
 		Plastic (manufacturer) & 26 & 5\textendash130 & 300 & 0.5\textendash100 & 300\\
 		\hline
@@ -38,9 +39,7 @@ The latter is set to \si{500}{ms}.
 	\caption{\label{tab:samples}Legend (350 words max). Example legend text.}
 \end{table}
 Our spectral data set consists of 46 samples which contains non-plastic samples from the riverine and marine environment and plastics from manufacturers and retail products.
-\ref{tab:samples} gives a summary of all samples with the range of the measurement parameters used in this study.
+Table~\ref{tab:samples} gives a summary of all samples with the range of the measurement parameters used in this study.
 For each sample, we acquire multiple spectra with two sets of parameters, namely laser power and illumination time.
 Furthermore, the difference between the measurements are adjustments of the optical setup.
 This produces spectral variations that are used to capture data heterogeneities due to experimental variations.
-\textbf{include manufacturer?}
- 
