@@ -1,52 +1,43 @@
 \section*{Introduction}
-\textbf{Für mich JN:flow not good, to be revised, add lit}
-
 The increasing plastic pollution is a potential health hazard of our modern society.
-Once plastic waste enters our environment, they can persist for centuries as most plastic types are resistant to natural degradation processes.
+Once plastic waste enters our environment, they can persist for decades as most plastic types are resistant to natural degradation processes.
 Environmental influences, however, can cause plastic waste disintegrate into micron-sized particles commonly referred to as microplastics.
-Today, microplastics have already been detected on numerous sites which suggests that most species are exposed to microplastics on a daily basis that can then be absorbed or ingested.
+To date, microplastics have already been detected on numerous sites which suggests that most species are exposed them on a daily basis that can then be absorbed or ingested.
 Since 2020, we also know that microplastics can be found in humans when a study by Ragusa et al. detected microplastics in the human placenta.
-To evaluate the health risk of microplastics, the vast amount of microplastics sources must be accounted for.
+To evaluate the health risk of microplastics, their different sources must be taken into account.
 Here, detection techniques to identify and classify plastic waste at different stages are indispensable to trace a particle back to its source.
 
 Plastic waste samples are highly diverse due to environmental influences and the sheer endless possibilities to produce plastic with desired material properties.
 Studies on environmental pollution commonly use Raman and Fourier transform infrared (FTIR) spectroscopy solution to analyse plastic samples.
-Both techniques, however, come with physical limitations and hence only a subset of plastic waste types can be covered.
-This leads to a demand, there is a demand for additional techniques that can be used for plastic identification.
+Both techniques, however, come with physical limitations and hence, only a subset of plastic waste types can be covered.
+As a result, additional techinques for plastic waste identification are desirable.
 
-Most recently, Ornik et al. \cite{Ornik2020} demonstrated that photoluminescence spectroscopy is suitable to distinguish plastics from other samples in the riverine environment.
+Most recently, Ornik et al. \cite{Ornik2020} used photoluminescence (PL) spectroscopy for plastic identification.
+They demonstrated that by using intensity ratios different plastic samples can be distinguished from other samples in the riverine environment.
+This identification method, however, may not be reproducible since a PL spectrum can change with different experimental factors such as hardware alignments, sample sites or even scientific experiences.
+At the same time, it is impractical to capture and quantify these influences since the number of possible factors is likely to be huge.
+An alternative solution is to take large sets of spectra that capture only a part of variations due to changes in the measurement and integrate them in a spectral library.
+Once implemented, algorithms and mathematical models help unraveling the origins of the plastic sample.
+For such applications, machine learning (ML) models are suitable candidates as they account for data variations in their predictions.
 
-Compared to the previous techniques, photoluminescence (PL) stands out for its simplicity.
-A basic setup consists of only two components, namely a monochromatic laser and spectrometer, which makes it a globally accessible technique for microplastic identification.
-However, the simplicity of the basic setup also raises questions about the comparability of different spectral data.
-Even if a sample is measured by two setups with identical hardware, the acquired spectra can look different because of different alignments, sample sites or even scientific experiences.
-Thus, while measurements should always be taken at laboratory conditions, this cannot be always fulfilled and raises the question for other identification methods that can be used instead.
-One possible solution is to take advantage of the fact that large sets of data can be generated due to the simplicity of the setup.
-Once integrated in a library, computer algorithms and models can be developed to help unraveling the origins of the plastic sample.
+To generate a plastic waste prediction model, we apply a selected learning method on the labeled spectral dataset.
+The model's performance partially depends on the number of input variables in a dataset, i.e. the dataset's dimensionality.
+For example, in our study this would be the intensity for each channel of our spectrometer.
+To improve the performance of the model, it is common practice to reduce the number of input variables while retaining the essential data information.
+A careful choice of the transformation technique allows a physical interpretation of the results and thus, a better understanding of the dataset.
+Here, a recently published technique termed as signal dissection by correlation maximization (SDCM) stands out which has been successfully demonstrated on a medical dataset \cite{Grau2019}.
+The application of this method on PL spectra for plastic waste prediction has not been applied yet.
 
-Today, we have a choice over a vast amount of computational methods that could be used for plastic classification.
-Amongst them, machine learning models are the most popular ones with many established methods available to the public.
-Generating a machine learning model consists of two steps: first, we identify patterns on a selected dataset and second, we select a learning model to use these patterns and identify the plastic samples.
-Since different combinations of methods can be used to do both steps, it is not clear if the chosen method can work with high accuracies, i.e. the probability that a model based prediction is correct, in the presence of data heterogeneities due to experimental variations.
+In this study, we demonstrate that SDCM can produce a low-dimensional, physically interpretable dataset that can be used to generate prediction models that are robust against experimental heterogeneities
 
-Here, we look at two different methods to identify patterns.
+
+to do both steps, it is not clear which combination works with high accuracies, i.e. the probability that a model based prediction is correct, for our outlined problem.
+
+
+
 The first one uses all information from a single spectrum while the second one uses a method known as signal dissection by correlation maximization (SDCM).
 The latter has the advantage that physically meaningful patterns can be extracted.
 Our study shows that, machine learning models based on SDCM are more robust towards experimental heterogoneities.
-
-Discovery of micrplastics in human body
-Nobody likes plastic in our body.
-What kind of plastics are they
-Where do they come from?
-
-plastics in human
-need for detection of plastics
-techniques
-PL
-Simple but can vary
-Robust method which works with signatures
-use SDCM
-
 
 svc
 random forest
