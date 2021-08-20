@@ -725,11 +725,11 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.4142136"
-     inkscape:cx="280.38377"
-     inkscape:cy="63.659229"
+     inkscape:zoom="4.0000001"
+     inkscape:cx="227.43328"
+     inkscape:cy="189.18112"
      inkscape:document-units="mm"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="layer2"
      inkscape:document-rotation="0"
      showgrid="false"
      inkscape:window-width="1920"
@@ -1116,7 +1116,7 @@
          id="tspan1745"
          x="45.631275"
          y="38.744331"
-         style="font-size:2.82222px;stroke-width:0.264583">lens</tspan></text>
+         style="font-size:2.82222px;stroke-width:0.264583">lens 2</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:2.82222px;line-height:1;font-family:Calibri;-inkscape-font-specification:Calibri;letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
@@ -1147,7 +1147,7 @@
          id="tspan1757"
          x="45.631275"
          y="75.214523"
-         style="font-size:2.82222px;stroke-width:0.264583">lens</tspan></text>
+         style="font-size:2.82222px;stroke-width:0.264583">lens 1</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:2.82222px;line-height:1;font-family:Calibri;-inkscape-font-specification:Calibri;letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
@@ -1239,7 +1239,7 @@
        inkscape:export-ydpi="300" />
     <path
        style="fill:none;stroke:#000000;stroke-width:0.264583;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:0.264583, 0.529166;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#marker2893)"
-       d="M 51.103497,37.798021 64.644,37.797605"
+       d="M 52.757143,37.798021 64.644,37.797605"
        id="path2677"
        sodipodi:nodetypes="cc"
        inkscape:export-xdpi="300"
@@ -1260,7 +1260,7 @@
        inkscape:export-ydpi="300" />
     <path
        style="fill:none;stroke:#000000;stroke-width:0.264583;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:0.264583, 0.529166;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#marker3087)"
-       d="M 51.103497,74.267812 H 64.651"
+       d="M 52.757143,74.267812 H 64.651"
        id="path2683"
        sodipodi:nodetypes="cc"
        inkscape:export-xdpi="300"
