@@ -22,11 +22,11 @@ Once implemented, algorithms and mathematical models help unraveling the origins
 
 For predictions that account for data variations, machine learning (ML) models are suitable candidates.
 To generate a plastic waste prediction model, we apply a selected learning method on the labeled spectral dataset.
-The model's performance partially depends on the number of input variables in a dataset, which, in our case, is the intensity for each channel of our spectrometer.
+The model's performance partially depends on the number of input variables in a dataset, which, in our case, is the measured intensity for each channel of our spectrometer.
 To improve the performance, it is common practice to reduce the number of variables while retaining the essential data information \cite{Aggarwal2001,Fodor2002}.
-A careful choice of the transformation technique allows a physical interpretation of the results and thus, a better understanding of the dataset.
-For such an application, a recently published technique termed as signal dissection by correlation maximization (SDCM) stands out which successfully discovered new signatures in a gene expression dataset \cite{Grau2019}.
-This is particularly attractive for PL-based plastic litter detection as it can identify type specific subspectra that not only allow a physical interpretation but are also robust against experimental variations.
+The efficiency to capture most of the information depends on the selected transformation technique.
+Here, recently published technique termed as signal dissection by correlation maximization (SDCM) stands out which successfully discovered new hidden signatures in a gene expression dataset \cite{Grau2019}.
+This is particularly attractive for PL-based plastic litter detection as it can identify type specific subspectra that are robust against experimental variations.
 
 In this report, we demonstrate that SDCM is suitable to generate robust PL-based plastic litter identification models.
 To demonstrate this, we look at two sets of ML models that are either based on a SDCM-transformed PL dataset or an untransformed dataset.
