@@ -1,0 +1,30 @@
+\subsection*{Evaluation of ML models}
+\begin{figure}[ht]
+	\centering
+	\begin{subfigure}[t]{0.45\textwidth}
+		\includegraphics[valign=t]{figures/learningMethodVsaccuracy.pdf}
+		\caption{Accuracy}
+		\label{fig:learnMethodAccuracy}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[t]{0.45\textwidth}
+		\includegraphics[valign=t]{figures/learningMethodVsf1.pdf}
+		\caption{f1}
+		\label{fig:learnMethodF1}
+	\end{subfigure}
+	\caption{Plot of the performance metrics \textit{accuracy} and \textit{f1} for different plastic classification models.}
+\end{figure}
+
+We evaluate the performance of SDCM-based classification models, by calculating the metrics \textit{accuracy} and \textit{f1} for all ML models.
+Figures~\ref{fig:learnMethodAccuracy} and \ref{fig:learnMethodF1} show plots of the calculated values for accuracy and f1, respectively.
+The models generated with the SVC and the Random Forest algorithm achieve performance metric values over \si{90}{\%} for all dimension reduction techniques.
+In comparison to these two model types, the performance drops by \si{20}{\%} for models generated the Naive Bayes algorithm.
+Thus, for plastic classification the former two methods are likely to be more suitable in the future.
+
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=\textwidth]{figures/confusionMatrix.png}
+	\caption{Confusion matrix for individual sample classes}
+	\label{fig:confusionMatrix}
+\end{figure}
