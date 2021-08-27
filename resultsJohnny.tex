@@ -1,10 +1,10 @@
-\subsection*{Evaluation of ML models}
+\subsection*{Performance evaluation of ML models}
 \begin{figure}[ht]
 	\centering
 	\begin{subfigure}[t]{0.45\textwidth}
 		\includegraphics[valign=t]{figures/learningMethodVsaccuracy.pdf}
 		\caption{Accuracy}
-		\label{fig:learnMethodAccuracy}
+		\label{fig:learnMethodAcc}
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}[t]{0.45\textwidth}
@@ -15,12 +15,20 @@
 	\caption{Plot of the performance metrics \textit{accuracy} and \textit{f1} for different plastic classification models.}
 \end{figure}
 
-We evaluate the performance of SDCM-based classification models, by calculating the metrics \textit{accuracy} and \textit{f1} for all ML models.
-Figures~\ref{fig:learnMethodAccuracy} and \ref{fig:learnMethodF1} show plots of the calculated values for accuracy and f1, respectively.
-The models generated with the SVC and the Random Forest algorithm achieve performance metric values over \si{90}{\%} for all dimension reduction techniques.
-In comparison to these two model types, the performance drops by \si{20}{\%} for models generated the Naive Bayes algorithm.
+We compare the performances between the classification models, by evaluating the performance metrics \textit{accuracy} and \textit{f1}.
+Figures~\ref{fig:learnMethodAcc} and \ref{fig:learnMethodF1} show plots of the values and standard deviations for the accuracy and f1, respectively.
+All values are also presented in the supplements in Tables~\ref{tab:learnMethodAcc} and \ref{tab:learnMethodF1}.
+The plot shows that the learning method has the biggest influence on the model's performance.
+Models generated with the SVC and the Random Forest algorithm achieve values over \si{90}{\%}, while it drops by \si{20}{\%} for models generated the Naive Bayes algorithm.
 Thus, for plastic classification the former two methods are likely to be more suitable in the future.
 
+The dimension reduction technique, on the other hand, has little influence on the performance.
+SVC works best with the entire spectral data or when it is transformed with PCA as evidenced by values around \si{99}{\%} for both the accuracy and f1.
+When applying SVC on SDCM-transformed data both metrics drop slightly by \si{5}{\%}.
+For models generated with the Random Forest algorithm the values for accuracy and f1 are between $\mathrm{95\,\%}$\textendash$\mathrm{99\,\%}$ and $\mathrm{94\,\%}$\textendash$\mathrm{99\,\%}$, respectively.
+Here, the algorithm works best with PCA-transformed data followed by SDCM-transformed data.
+
+\subsection*{Classification performance of ML models}
 
 \begin{figure}[ht]
 	\centering
@@ -28,3 +36,12 @@ Thus, for plastic classification the former two methods are likely to be more su
 	\caption{Confusion matrix for individual sample classes}
 	\label{fig:confusionMatrix}
 \end{figure}
+
+Next, we evaluate the performance of our models with respect to the different sample types in our dataset.
+Figure~\ref{fig:confusionMatrix} presents a confusion matrix of all models in this study.
+It reveals that the performance for an individual class depends on the dimension reduction technique and learning method.
+For example, a model that uses random forest and SDCM-transformed data is better at identifying PA than a random forest model with PCA-transformed data.
+We also observe trends that are present in all models: first, PP gets mixed up as PE and second, PVC gets mixed up as a non-plastic material.
+These observations show, that more data is required so that the dimension reduction techniques can capture the spectral signatures to identify the classes.
+
+ 
