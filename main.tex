@@ -1,6 +1,13 @@
 \documentclass[fleqn,10pt]{wlscirep}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
+\usepackage{caption}
+\usepackage[position=top]{subcaption}
+\usepackage[export]{adjustbox}
+\usepackage{array}
+
+\newcommand{\si}[2]{$\mathrm{#1\,#2}$}
+
 \title{Scientific Reports Title to see here}
 
 \author[1,*]{Alice Author}
@@ -38,43 +45,64 @@
 
 \noindent Please note: Abbreviations should be introduced at the first mention in the main text – no abbreviations lists. Suggested structure of main text (not enforced) is provided below.
 
-\section*{Introduction}
-    Microplastic contamination is an increasingly problematic risk for the
-    environment, and in the end potentially also for human health, if these
-    particles get into the nutrition chain. To identify causes and remedies it
-    is essential to quantify which type of plastic material the microplastic
-    contaminations are made of. A cost effective and scalable approach is
-    photoluminescence. Here, we investigate if these light spectra are
-    sufficient for robust predictions of plastic type and other sample
-    characteristics.
+%<<<<<<< HEAD
+%\section*{Introduction}
+%    Microplastic contamination is an increasingly problematic risk for the
+%    environment, and in the end potentially also for human health, if these
+%    particles get into the nutrition chain. To identify causes and remedies it
+%    is essential to quantify which type of plastic material the microplastic
+%    contaminations are made of. A cost effective and scalable approach is
+%    photoluminescence. Here, we investigate if these light spectra are
+%    sufficient for robust predictions of plastic type and other sample
+%    characteristics.
+%
+%\section*{Results}
+%
+%\subsection*{Experiments}
+%\subsection*{Classification}
+%    \begin{table}[ht]
+%        \centering
+%        \begin{tabular}{c c||c|c|c|c}
+%            \hline
+%            Input data & Spectral range & Set &Accuracy & Precision & Recall \\
+%            \hline
+%            Spectra & 410nm--860nm  & Test&1 & 1 & 1  \\
+%                    & 410nm--860nm  & Validation&1 & 1 & 1  \\
+%                    & 410nm--1010nm & Test&1 & 1 & 1  \\
+%                    & 410nm--1010nm & Validation&1 & 1 & 1  \\
+%            PCA     & 410nm--860nm  & Test&1 & 1 & 1   \\
+%                    & 410nm--860nm  & Validation&1 & 1 & 1   \\
+%                    & 410nm--1010nm & Test&1 & 1 & 1   \\
+%                    & 410nm--1010nm & Validation&1 & 1 & 1   \\
+%            SDCM    & 410nm--860nm  & Test&1 & 1 & 1  \\
+%                    & 410nm--860nm  & Validation&1 & 1 & 1  \\
+%                    & 410nm--1010nm & Test&1 & 1 & 1 \\  
+%                    & 410nm--1010nm & Validation&1 & 1 & 1  
+%        \end{tabular}
+%        \caption{Classification results.}
+%        \label{tab:dataoverview}
+%    \end{table}
+%\subsection*{Signature analysis}
+%=======
+\input{introduction.tex}
 
 \section*{Results}
 
-\subsection*{Experiments}
-\subsection*{Classification}
-    \begin{table}[ht]
-        \centering
-        \begin{tabular}{c c||c|c|c|c}
-            \hline
-            Input data & Spectral range & Set &Accuracy & Precision & Recall \\
-            \hline
-            Spectra & 410nm--860nm  & Test&1 & 1 & 1  \\
-                    & 410nm--860nm  & Validation&1 & 1 & 1  \\
-                    & 410nm--1010nm & Test&1 & 1 & 1  \\
-                    & 410nm--1010nm & Validation&1 & 1 & 1  \\
-            PCA     & 410nm--860nm  & Test&1 & 1 & 1   \\
-                    & 410nm--860nm  & Validation&1 & 1 & 1   \\
-                    & 410nm--1010nm & Test&1 & 1 & 1   \\
-                    & 410nm--1010nm & Validation&1 & 1 & 1   \\
-            SDCM    & 410nm--860nm  & Test&1 & 1 & 1  \\
-                    & 410nm--860nm  & Validation&1 & 1 & 1  \\
-                    & 410nm--1010nm & Test&1 & 1 & 1 \\  
-                    & 410nm--1010nm & Validation&1 & 1 & 1  
-        \end{tabular}
-        \caption{Classification results.}
-        \label{tab:dataoverview}
-    \end{table}
-\subsection*{Signature analysis}
+\input{resultsJohnny.tex}
+
+\subsection*{Subsection}
+
+Example text under a subsection. Bulleted lists may be used where appropriate, e.g.
+
+\begin{itemize}
+\item First item
+\item Second item
+\end{itemize}
+
+\subsubsection*{Third-level section}
+ 
+Topical subheadings are allowed.
+
 \section*{Discussion}
 
 
@@ -157,6 +185,19 @@
 \bibliography{sample}
 
 \section*{Acknowledgements}
+\input{methodsJohnny.tex}
+
+\bibliography{D:/bibtex/Microplastics-PaperSDCM}
+
+\section*{Acknowledgements (not compulsory)}
+
+Acknowledgements should be brief, and should not include thanks to anonymous referees and editors, or effusive comments. Grant or contribution numbers may be acknowledged.
+
+\section*{Author contributions statement}
+
+Must include all authors, identified by initials, for example:
+A.A. conceived the experiment(s),  A.A. and B.A. conducted the experiment(s), C.A. and D.A. analysed the results.  All authors reviewed the manuscript. 
+
 \section*{Additional information}
 \subsection*{Data preparation pipeline}
 \label{sub:Data preparation pipeline}
@@ -198,4 +239,15 @@
 %
 %Figures and tables can be referenced in LaTeX using the ref command, e.g. Figure \ref{fig:stream} and Table \ref{tab:example}.
 
+<<<<<<< HEAD
 \end{document}
+=======
+To include, in this order: \textbf{Accession codes} (where applicable); \textbf{Competing interests} (mandatory statement). 
+
+The corresponding author is responsible for submitting a \href{http://www.nature.com/srep/policies/index.html#competing}{competing interests statement} on behalf of all authors of the paper. This statement must be included in the submitted article file.
+
+\section*{Supplementary information}
+\input{supplementsJohnny.tex}
+
+\end{document}
+>>>>>>> 168d5a076da74ed1968c089680659c0969fdee10

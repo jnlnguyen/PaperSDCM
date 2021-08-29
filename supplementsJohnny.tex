@@ -1,0 +1,40 @@
+\subsection*{Calculated classification model metrics}
+\begin{table}[ht]
+	\begin{subtable}[h]{\textwidth}
+		\centering
+		\begin{tabular}{|p{2.5cm}*{6}{|m{1.4cm}}|}
+			\hline
+			Learning Method & \multicolumn{2}{c|}{None} & \multicolumn{2}{c|}{PCA} & \multicolumn{2}{c|}{SDCM}\\	
+			\cline{2-7}
+			{} & acc [\%] & $\Delta$acc [\%] & acc [\%] & $\Delta$acc [\%] & acc [\%] & $\Delta$acc [\%] \\
+			\hline
+			SVC & 99.5 & 0.2 & 99.3 & 0.3 & 95.0 & 1.1\\
+			\hline
+			Random Forest & 95.7 & 0.7 & 98.7 & 0.2 & 97.2 & 0.6\\
+			\hline
+			Naive Bayes & 55.5 & 2.3 & 71.3 & 0.9 & 63.8 & 1\\
+			\hline
+		\end{tabular}
+		\caption{Accuracy}
+		\label{tab:learnMethodAcc}
+	\end{subtable}
+	\begin{subtable}[h]{\textwidth}
+		\centering
+		\begin{tabular}{|p{2.5cm}*{6}{|m{1.4cm}}|}
+			\hline
+			Learning Method & \multicolumn{2}{c|}{None} & \multicolumn{2}{c|}{PCA} & \multicolumn{2}{c|}{SDCM}\\	
+			\cline{2-7}
+			{} & f1 [\%] & $\Delta$f1 [\%] & f1 [\%] & $\Delta$f1 [\%] & f1 [\%] & $\Delta$f1 [\%] \\
+			\hline
+			SVC & 99.6 & 0.2 & 99.2 & 0.5 & 94.6 & 0.9\\
+			\hline
+			Random Forest & 94.7 & 1.1 & 98.4 & 0.3 & 96.6 & 0.7\\
+			\hline
+			Naive Bayes & 55.0 & 2.6 & 71.7 & 1 & 64.7 & 1.1\\
+			\hline
+		\end{tabular}
+		\caption{f1}
+		\label{tab:learnMethodF1}
+	\end{subtable}
+	\caption{Summary of samples and measurement parameters.}
+\end{table}

@@ -1,1 +1,6 @@
-*.pdf
+main.aux
+main.bbl
+main.blg
+main.out
+main.synctex.gz
+main.pdf

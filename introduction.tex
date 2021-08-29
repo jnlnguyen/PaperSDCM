@@ -1,0 +1,34 @@
+\section*{Introduction}
+Our planet is drowning in plastic litter that can sneakily enter our body over time.
+An estimation showed that in 2010 at least 4.8 million tons of plastic litter has already entered our ocean\cite{Jambeck2015a}; a volume that will increase without an effective waste management plan\cite{Jambeck2015a, Geyer2017}. 
+Once in the wild, plastic can persist for decades as most types are resistant to natural degradation processes\cite{Chamas2020}.
+Environmental influences, however, can cause it to disintegrate into micron-sized particles commonly known as microplastics\cite{Thompson2004, Julienne2019, Zhang2021, Song2017, Duis2016}.
+Almost invisible to the eye, they have now been detected on nearly every corner of our planet\cite{Duis2016,Chiba2018,Napper2020,Eerkes-Medrano2015,Andrady2011,Allen2019a}, in animals \cite{Barboza2020,Haave2021, Jamieson2019} and even in our food\cite{Koelmans2019,Zhang2020a}.
+Since 2021, we also have the first evidence that microplastics are present in humans, when Ragusa et al. detected microplastics in the human placenta\cite{Ragusa2021}.
+
+Plastic litter is highly diverse due to environmental influences and the sheer endless possibilities to produce plastic with desired material properties.
+Therefore, to evaluate their detrimental effects on animals and humans, we need a deeper insight on the samples origins\cite{Prata2020, Campanale2020, Lim2021}.
+Here, tools to detect and classify plastic litter at different stages play an indispensable role.
+Studies on plastic pollution commonly use Raman and Fourier transform infrared (FTIR) spectroscopy solutions to analyse plastic samples\cite{Prata2019,Loder2015,Sun2019,Zhang2020b}.
+Both techniques, however, come with physical limitations\cite{Araujo2018a, Loder2015,Xu2019} and hence, we only cover a subset of plastic waste types out there.
+
+Most recently, Ornik et al. \cite{Ornik2020} used photoluminescence (PL) spectroscopy for plastic identification.
+By comparing the intensity ratios in the PL spectrum of different samples, they sucessfully distinguished plastics from non-plastic samples in the riverine and marine environment.
+Such an identification method, however, may not be reproducible since a measurement can change with different experimental factors such as hardware alignments, sample sites or even scientific experiences.
+On the other hand, it is impractical to capture and quantify these influences since it is impossible to account for all possible factors.
+Nevertheless, it raises the question if there are subsets in the spectra that can be used for the identification while being robust against experimental variations.
+One possible solution is to capture a part of these variations and integrate them in a spectral library.
+Once implemented, algorithms and mathematical models help unraveling the origins of the plastic sample.
+
+For predictions that account for data variations, machine learning (ML) models are suitable candidates.
+To generate a plastic waste prediction model, we apply a selected learning method on the labeled spectral dataset.
+The model's performance partially depends on the number of input variables in a dataset, which, in our case, is the measured intensity for each channel of our spectrometer.
+To improve the performance, it is common practice to reduce the number of variables while retaining the essential data information \cite{Aggarwal2001,Fodor2002}.
+The efficiency to capture most of the information depends on the selected transformation technique.
+Here, recently published technique termed as signal dissection by correlation maximization (SDCM) stands out which successfully discovered new hidden signatures in a gene expression dataset \cite{Grau2019}.
+This is particularly attractive for PL-based plastic litter detection as it can identify type specific subspectra that are robust against experimental variations.
+
+In this report, we demonstrate that SDCM is suitable to generate robust PL-based plastic litter identification models.
+To demonstrate this, we look at two sets of ML models that are either based on a SDCM-transformed PL dataset or an untransformed dataset.
+By comparing model's accuracies, i.e. the probability that a model based prediction is correct, we find consistently higher values for SDCM-based ML models than their counterparts.
+This underlines the robustness of SDCM-transformed PL datasets against experimental variations.
