@@ -5,8 +5,10 @@
 \usepackage[position=top]{subcaption}
 \usepackage[export]{adjustbox}
 \usepackage{array}
-
-\newcommand{\si}[2]{$\mathrm{#1\,#2}$}
+\usepackage{todonotes}
+\usepackage{siunitx}
+%\newcommand{\si}[2]{$\mathrm{#1\,#2}$}
+\DeclareMathOperator{\mean}{mean}
 
 \title{Scientific Reports Title to see here}
 
@@ -37,10 +39,6 @@
 
 \flushbottom
 \maketitle
-% * <john.hammersley@gmail.com> 2015-02-09T12:07:31.197Z:
-%
-%  Click the title above to edit the author information and abstract
-%
 \thispagestyle{empty}
 
 \noindent Please note: Abbreviations should be introduced at the first mention in the main text – no abbreviations lists. Suggested structure of main text (not enforced) is provided below.
@@ -48,24 +46,20 @@
 \input{introduction.tex}
 \section*{Results}
 \input{resultsJohnny.tex}
+\input{results_physicalInterpretation.tex}
 
 \section*{Discussion}
 
 
 \section*{Methods}
-\subsection*{Measurements}
-\subsection*{Classifciation}
-\subsubsection*{Data composition}
-\subsection*{Data preparation}
-\subsection*{SDCM}
-\subsection*{Classification}
+\input{methodsJohnny.tex}
+\include{methods_inputMethods.tex}
+\input{methods_classification.tex}
+\input{methods_interpretation.tex}
 
 
 
 \section*{Acknowledgements}
-\input{methodsJohnny.tex}
-
-\section*{Acknowledgements (not compulsory)}
 \section*{Author contributions statement}
 
 Must include all authors, identified by initials, for example:
@@ -75,11 +69,9 @@ To include, in this order: \textbf{Accession codes} (where applicable); \textbf{
 
 The corresponding author is responsible for submitting a \href{http://www.nature.com/srep/policies/index.html#competing}{competing interests statement} on behalf of all authors of the paper. This statement must be included in the submitted article file.
 
-\section*{Additional information}
-\subsection*{Data preparation pipeline}
-\label{sub:Data preparation pipeline}
-\subsection*{Classification pipeline}
 \section*{Supplementary information}
+%\input{dataPreparationPipeline.tex}
+%\input{classificationPipeline.tex}
 \input{supplementsJohnny.tex}
 
 \newpage
