@@ -45,63 +45,9 @@
 
 \noindent Please note: Abbreviations should be introduced at the first mention in the main text – no abbreviations lists. Suggested structure of main text (not enforced) is provided below.
 
-%<<<<<<< HEAD
-%\section*{Introduction}
-%    Microplastic contamination is an increasingly problematic risk for the
-%    environment, and in the end potentially also for human health, if these
-%    particles get into the nutrition chain. To identify causes and remedies it
-%    is essential to quantify which type of plastic material the microplastic
-%    contaminations are made of. A cost effective and scalable approach is
-%    photoluminescence. Here, we investigate if these light spectra are
-%    sufficient for robust predictions of plastic type and other sample
-%    characteristics.
-%
-%\section*{Results}
-%
-%\subsection*{Experiments}
-%\subsection*{Classification}
-%    \begin{table}[ht]
-%        \centering
-%        \begin{tabular}{c c||c|c|c|c}
-%            \hline
-%            Input data & Spectral range & Set &Accuracy & Precision & Recall \\
-%            \hline
-%            Spectra & 410nm--860nm  & Test&1 & 1 & 1  \\
-%                    & 410nm--860nm  & Validation&1 & 1 & 1  \\
-%                    & 410nm--1010nm & Test&1 & 1 & 1  \\
-%                    & 410nm--1010nm & Validation&1 & 1 & 1  \\
-%            PCA     & 410nm--860nm  & Test&1 & 1 & 1   \\
-%                    & 410nm--860nm  & Validation&1 & 1 & 1   \\
-%                    & 410nm--1010nm & Test&1 & 1 & 1   \\
-%                    & 410nm--1010nm & Validation&1 & 1 & 1   \\
-%            SDCM    & 410nm--860nm  & Test&1 & 1 & 1  \\
-%                    & 410nm--860nm  & Validation&1 & 1 & 1  \\
-%                    & 410nm--1010nm & Test&1 & 1 & 1 \\  
-%                    & 410nm--1010nm & Validation&1 & 1 & 1  
-%        \end{tabular}
-%        \caption{Classification results.}
-%        \label{tab:dataoverview}
-%    \end{table}
-%\subsection*{Signature analysis}
-%=======
 \input{introduction.tex}
-
 \section*{Results}
-
 \input{resultsJohnny.tex}
-
-\subsection*{Subsection}
-
-Example text under a subsection. Bulleted lists may be used where appropriate, e.g.
-
-\begin{itemize}
-\item First item
-\item Second item
-\end{itemize}
-
-\subsubsection*{Third-level section}
- 
-Topical subheadings are allowed.
 
 \section*{Discussion}
 
@@ -110,144 +56,33 @@ Topical subheadings are allowed.
 \subsection*{Measurements}
 \subsection*{Classifciation}
 \subsubsection*{Data composition}
-    We have measured X samples of Y different plastic types, for several
-    overlapping characteristics, both known, like color, and unknown in the pipeline
-    of the respective manufacturer.
-    \begin{table}[ht]
-        \centering
-            \begin{tabular}{c||c|c}
-                \hline
-                Set & Percentage of total data & \# Measurements  \\
-                \hline
-                Training+Testing & 80\%    & 1000        \\
-                Validation & 20\% & 200 
-            \end{tabular}
-        \caption{Listing of the used samples and their properties.}
-        \label{tab:setoverview}
-    \end{table}
-    \begin{table}[ht]
-        \centering
-            \begin{tabular}{c|c|c|c|c|c}
-                \hline
-                Sample Type & Color & Origin & Sample Form & \# Measurements &
-                \# Replicates\\
-                \hline
-                PE & red    & BAM       & Bulk & 9999 & 2 \\
-                   & blue   & BAM       & Bulk & 9999 & 2 \\
-                   & blue   & unknown   & Bulk & 9999 & 2 \\
-                PMMA & red & BAM & Bulk & 9999 & 2 \\
-            \end{tabular}
-        \caption{Listing of the used samples and their properties.}
-        \label{tab:dataoverview}
-    \end{table}
 \subsection*{Data preparation}
 \subsection*{SDCM}
-    To model the influence of above heterogeneities on the observable spectra,
-    we adopt a superposition model  
-    \begin{equation*}
-        S = \sum_{k=1}^n E_k + \eta
-    \end{equation*}
-    where $S$ denotes the $n_F\times n_M$ matrix of $n_F$ features and $n_M$
-    measurements, and $\eta$ the residual noise of the measurements.
+\subsection*{Classification}
 
-    To reverse the sum operator in this superposition and gain signatures, and
-    ideally understanding, of heterogeneities that allow discerning the plastic
-    types, we have applied SDCM, a signal dissection method originally developed
-    for gene expression of cancer cells that are also complex superpositions of
-    many simultaneously measured interactions or technical characteristics of
-    the respective measurement pipeline. 
 
-    Additionally, SDCM has been shown to
-    dissect the matrix sum of simulated effects in a highly specific way, i.e.
-    signatures correspond almost 1:1 with simulated effects, whereas other
-    methods mixed simulated effects, such as PCA due to orthogonality
-    constraints. As we aim not only to predict plastics type with high accuracy,
-    but ideally also identify signatures that are explainable or univariately
-    highly specific to certain physical plastic properties, we selected SDCM for
-    dimension reduction.
-
-    First, we preprocessed and normalized our data to remove known artefacts and
-    known measurement biases; our preprocessing and normalization pipeline is
-    explained in detail in \autoref{sub:Data preparation pipeline}
-
-    Then, we randomly shuffled our n samples in a replicate(????, eigentlich
-    type)-aware way to set a uniformly subselected 20\% partition aside for
-    later validation. The remaining two thirds of samples were used to discover
-    signatures, and both train and optimize predictor models based on the SDCM
-    projections on these signatures. To keep the data consistent, the 80\% data
-    used for the dissection was re-projected on the discovered axes.
-
-    An analysis flow diagram is shown in (TODO).
-    \subsection*{Classification}
-    The classification was performed with the standard tools provided by the
-    PYTHON sklearn library. The
-
-\bibliography{sample}
 
 \section*{Acknowledgements}
 \input{methodsJohnny.tex}
 
-\bibliography{D:/bibtex/Microplastics-PaperSDCM}
-
 \section*{Acknowledgements (not compulsory)}
-
-Acknowledgements should be brief, and should not include thanks to anonymous referees and editors, or effusive comments. Grant or contribution numbers may be acknowledged.
-
 \section*{Author contributions statement}
 
 Must include all authors, identified by initials, for example:
 A.A. conceived the experiment(s),  A.A. and B.A. conducted the experiment(s), C.A. and D.A. analysed the results.  All authors reviewed the manuscript. 
 
-\section*{Additional information}
-\subsection*{Data preparation pipeline}
-\label{sub:Data preparation pipeline}
-    Before the classfication, the data was prepared with several steps:
-    \subsubsection*{Interpolation} 
-        The different spectra were interpolated onto a common axis. Here the
-        number of interpolation points wer
-    \subsubsection*{Background Subtraction} 
-        For each batch measurement a background measurement was recorded. Each
-        spectrum was subtracted by the background measurement.
-    \subsubsection*{Filtering} 
-    \subsubsection*{Featuredesign} 
-\subsection*{Classification pipeline}
-
-%To include, in this order: \textbf{Accession codes} (where applicable); \textbf{Competing interests} (mandatory statement). 
-%
-%The corresponding author is responsible for submitting a \href{http://www.nature.com/srep/policies/index.html#competing}{competing interests statement} on behalf of all authors of the paper. This statement must be included in the submitted article file.
-
-%\begin{figure}[ht]
-%\centering
-%\includegraphics[width=\linewidth]{figures/stream}
-%\caption{Legend (350 words max). Example legend text.}
-%\label{fig:stream}
-%\end{figure}
-%
-%\begin{table}[ht]
-%\centering
-%\begin{tabular}{|l|l|l|}
-%\hline
-%Condition & n & p \\
-%\hline
-%A & 5 & 0.1 \\
-%\hline
-%B & 10 & 0.01 \\
-%\hline
-%\end{tabular}
-%\caption{\label{tab:example}Legend (350 words max). Example legend text.}
-%\end{table}
-%
-%Figures and tables can be referenced in LaTeX using the ref command, e.g. Figure \ref{fig:stream} and Table \ref{tab:example}.
-
-<<<<<<< HEAD
-\end{document}
-=======
 To include, in this order: \textbf{Accession codes} (where applicable); \textbf{Competing interests} (mandatory statement). 
 
 The corresponding author is responsible for submitting a \href{http://www.nature.com/srep/policies/index.html#competing}{competing interests statement} on behalf of all authors of the paper. This statement must be included in the submitted article file.
 
+\section*{Additional information}
+\subsection*{Data preparation pipeline}
+\label{sub:Data preparation pipeline}
+\subsection*{Classification pipeline}
 \section*{Supplementary information}
 \input{supplementsJohnny.tex}
 
+\newpage
+\bibliography{Microplastics-PaperSDCM.bib}
+
 \end{document}
->>>>>>> 168d5a076da74ed1968c089680659c0969fdee10

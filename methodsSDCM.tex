@@ -1,0 +1,36 @@
+    To model the influence of above heterogeneities on the observable spectra,
+    we adopt a superposition model  
+    \begin{equation*}
+        S = \sum_{k=1}^n E_k + \eta
+    \end{equation*}
+    where $S$ denotes the $n_F\times n_M$ matrix of $n_F$ features and $n_M$
+    measurements, and $\eta$ the residual noise of the measurements.
+
+    To reverse the sum operator in this superposition and gain signatures, and
+    ideally understanding, of heterogeneities that allow discerning the plastic
+    types, we have applied SDCM, a signal dissection method originally developed
+    for gene expression of cancer cells that are also complex superpositions of
+    many simultaneously measured interactions or technical characteristics of
+    the respective measurement pipeline. 
+
+    Additionally, SDCM has been shown to
+    dissect the matrix sum of simulated effects in a highly specific way, i.e.
+    signatures correspond almost 1:1 with simulated effects, whereas other
+    methods mixed simulated effects, such as PCA due to orthogonality
+    constraints. As we aim not only to predict plastics type with high accuracy,
+    but ideally also identify signatures that are explainable or univariately
+    highly specific to certain physical plastic properties, we selected SDCM for
+    dimension reduction.
+
+    First, we preprocessed and normalized our data to remove known artefacts and
+    known measurement biases; our preprocessing and normalization pipeline is
+    explained in detail in \autoref{sub:Data preparation pipeline}
+
+    Then, we randomly shuffled our n samples in a replicate(????, eigentlich
+    type)-aware way to set a uniformly subselected 20\% partition aside for
+    later validation. The remaining two thirds of samples were used to discover
+    signatures, and both train and optimize predictor models based on the SDCM
+    projections on these signatures. To keep the data consistent, the 80\% data
+    used for the dissection was re-projected on the discovered axes.
+
+    An analysis flow diagram is shown in (TODO).

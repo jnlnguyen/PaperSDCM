@@ -1,6 +1,11 @@
 main.aux
 main.bbl
+main.fls
 main.blg
 main.out
+main.log
+main.fdb*
+main.run.xml
 main.synctex.gz
 main.pdf
+*pdf
