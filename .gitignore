@@ -8,4 +8,5 @@ main.fdb*
 main.run.xml
 main.synctex.gz
 main.pdf
-*pdf
+*.pdf
+*.aux
