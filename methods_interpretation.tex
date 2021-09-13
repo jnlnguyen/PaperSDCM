@@ -1,1 +1,85 @@
 \subsection*{Physical interpretation of signatures}
+To generate physically interpretable signatures from the dataset, we restricted
+the measurements to those for which the properties type, origin, color,
+isPlastic and sampleID are fully known. This reduced the input matrix to
+size $n\times m $\todo{insert values}. 
+
+In the following we define \emph{subsignatures} $k^*$ of a signature $k$ as
+those measurements which are consistently expessed stronger than the median
+along the signature axes in spectral space ($k^+$), consistently expressed
+weaker than the median ($k^-$), or all measurements ($k^0$).
+
+SDCM readily provides weights $w$ which quantify how much a measurement
+participates in a $k$. As the implementations of PCA in
+matlab and sklearn \todo{add ref or fancy this up} do no provide a comparable
+metric, we need to define the PCA axis weight for comparison.
+Let $\cpca{k}{j}$ be the coefficient of the $k$th principal component of the
+$j$th measruement. We then define 
+
+\begin{align*}
+    \wpcas{k}{j}
+        &= 
+        \sign\qty(\cpca{k}{j})
+        \min
+        \pqty{
+                1,  
+                \frac{
+                    \abs{\cpca{k}{j}}
+                }
+                {
+                    0.5 \cdot \max_{j\in\mSet}\abs{\cpca{k}{j}}
+                }
+            }_j \\
+    \wpcah{k}{j}
+        &= 
+        \begin{cases}
+            \sign\qty(\cpca{k}{j}) & \text{if }
+            \frac{\abs{\cpca{k}{j}}}{\max_{j\in\mSet} \abs{\cpca{k}{j}}} > 0.05  \\  
+            0 &  \text{else.}
+        \end{cases}
+\end{align*}
+
+A measurement $j$ is considered to be part of a subsignature ${k^*}$, if
+$\abs{\weight{k^*}{j}} \ge 0.05$. 
+Using the binary variables \enquote{is part of subsignature $\ssig{k}$} and \enquote{is
+part of label $l$}, we constructed a contingency table for each subsignature-label
+combination, and calculate a $p$ value using a Fisher exact test. 
+\todo{hypgergeometric test?}\todo{cite implementation}. We used the
+Benjamini-Hochberg procedure to calculate the falls discover rate
+(FDR).\todo{citaitons} 
+
+The dataset separates into $n$\todo{insert value} subclasses, which are listed
+in \todo{insert ref and citation}.
+For each subsignature ${k^*}$ and subclass $l$ we calculate the following
+metrics
+\begin{equation*}
+    \aws{l}{{k^*}} = \frac{1}{N_l}\sum_j \abs{w^{k^*}_j} \in [0,1], \qquad
+    \mems{l}{{k^*}} = \abs{2\cdot\aws{l}{{k^*}}-1} \in [0,1], \qquad
+    \avmems{{k^*}} = \frac{\sum_l N_l \mems{l}{{k^*}}}{\sum_l N_l} \in [0,1].
+\end{equation*}
+$\aws{l}{{k^*}}$ quantifies the mean weight of the label $l$ in the subsignature
+$\ssig{k}$. We are interested in subsignatures where $\abs{l}{\ssig{k}}\approx 1$
+(label entirely included in $\ssig{k}$) or $\abs{l}{\ssig{k}}\approx 0$ (label
+entirely excluded from $\ssig{k}$). This motivates the definition of
+$\mems{l}{\ssig{k}}$. Lastly we can calculate the average $\mems{l}{\ssig{k}}$
+of $\ssig{k}$, weighted by $N_l$. The more specific a subsignature is to a
+subset of labels of $\labelCol{\infoCat}$, the higher $\avmems{\ssig{k}}$ is. We
+define a signature to be selecting if it contains at least one label with
+$\pval{\ssig{k}}{l}\le \tpval$ and $\aws{\ssig{k}}{l} \ge \taw$, and
+$\avmems{\ssig{k}}\ge\tmem$. As in some specific signatures the significant
+weights are either strictly positive or negative, we applied to following
+correction to remove redundancies:
+\begin{itemize}
+    \item If $k^+, k^-, k^0$ are specific, only consider $k^0$
+    \item If either $k^+, k^0$ or $k^-, k^0$ are specific, only consider $k^+$
+        or $k^-$.
+\end{itemize}
+
+When calculating the above metrics, the choice of $\infoCat$ is
+important\todo{rephrase}. E.g. a signature that contains a particular
+combination of material types and colors, might not significantly contain either
+just the types or just the colors. Vice versa, a choice of
+$\infoCat$ that is specific to one label will likely be mutliple coding
+for a finer choice of $\infoCat$. The fewer categories are present in the test,
+the stronger and more general the signature is. 
+

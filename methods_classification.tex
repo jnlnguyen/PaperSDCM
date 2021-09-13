@@ -1,1 +1,200 @@
 \subsection*{Classification}
+\subsubsection*{Data input}
+\subsubsection*{Classification metrics}
+\todo{Schreiben!}
+\subsubsection*{Classification pipeline}
+For classification a standard classifcation pipeline was set up using the python
+sklearn pipeline \todo{citation}. A diagram illustrating the pipeline is shown
+in \todo{pipeline machen}.
+
+For each preTraining/validation split, each classifier was validated by n-fold
+\todo{n=?} cross validation over a range of parameters. The selection of
+parameters is displayed in \todo{reference to table}. The optimally performing
+set of parameters (measured by accuracy) are used for further classification.
+ 
+Next, for cross-validation, preTraining is split n\todo{wert einfügen}-times
+into \emph{training}(\SI{80}{\percent}) and \emph{testing}(\SI{20}{\percent}).
+Over each split, the classifier is trained with the optimized parameters on
+\emph{training}, and the classification metrics are evaluated on
+\emph{training},\emph{testing} and \emph{validation}.
+
+The final results were averaged by mean over all $n\times m$\todo{wert einfügen}
+calculations. The errors were the standard deviation over all $n\times
+m$\todo{wert einfügen} calculations.
+
+For each classification, a confusion matrix normalized along the rows was
+generated based on the predictions of the classifier. All confusion matrices
+were averaged by mean, and the error calculated by the standard deviation.
+
+\begin{figure}
+    \centering
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \begin{tikzpicture}[thick,scale=0.48, every
+            node/.style={scale=0.47}, node distance=15mm]
+            %\note (start) [startstop] {Raw Data} 
+            \node (rawdata) [io] {Spectral measurements};
+            \node (split) [process, below of=rawdata]
+            {Split};
+
+            \node (train) [io, below of=split, xshift=-35mm]
+            {Pre-Training};
+            \node (fDesignPreTrain) [process, below of=train]
+            {Feature Design};
+            \node (batchProcessingPreTraining) [process, below
+            of=fDesignPreTrain]{Median Subtraction};
+            \node (dimensionalReduction) [process, below
+            of=batchProcessingPreTraining]
+            {SDCM/PCA/Passthrough};
+            \node (projectionPreTraining) [process, below
+            of=dimensionalReduction]
+            {Projection/Passthrough};
+
+            \node (validation) [io, below of=split, xshift=35mm]
+            {Validation};
+            \node (fDesignValidation) [process, below of=validation]
+            {Feature Design};
+            \node (batchProcessingValidation) [process, below of=fDesignValidation]
+            {Median Subtraction};
+            \node (projectionValidation) [process, below
+            of=batchProcessingValidation]
+            {Projection/Passthrough};
+
+            \node (Input) [io, below
+            of=rawdata, yshift=-90mm]
+            {Input};
+
+            \draw [arrow] (rawdata) -- (split);
+                \draw [arrow] (split) -- (train);
+                    \draw [arrow] (train) -- (fDesignPreTrain);
+                    \draw [arrow] (fDesignPreTrain) -- (batchProcessingPreTraining);
+                    \draw [arrow] (batchProcessingPreTraining) --
+                    (dimensionalReduction);
+                    \draw [arrow] (dimensionalReduction) -- (projectionPreTraining);
+                        \draw [arrow] (projectionPreTraining) -- (Input);
+                \draw [arrow] (split) -- (validation);
+                    \draw [arrow] (validation) -- (fDesignValidation);
+                    \draw [arrow] (fDesignValidation) -- (batchProcessingValidation);
+                    \draw [arrow] (batchProcessingValidation) --
+                    (projectionValidation);
+                    \draw [arrow] (projectionValidation) -- (Input);
+            \draw [dashed, ->] (batchProcessingPreTraining) -- (batchProcessingValidation);
+            \draw [dashed, ->] (dimensionalReduction) -- (projectionValidation);
+            \draw [dashed, ->] (dimensionalReduction.west) to [out=180, in=180] (projectionPreTraining.west);
+        \end{tikzpicture}
+        \label{sfig:dataprep}
+        \caption{Data preparation}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \begin{tikzpicture}[thick,scale=0.48, every
+            node/.style={scale=0.47}, node distance=15mm]
+            %\note (start) [startstop] {Raw Data} 
+            \node (input) [io] {input};
+            \node (pretraining) [io, below of=input, xshift=50mm, yshift = -15mm]{Pre-Training};
+                \node (grid) [process, below of=pretraining, xshift=40mm] {Grid Search};
+                    \node (gridtraining) [io, below of=grid, xshift=-20mm]{Training};
+                    \node (gridtesting) [io, below of=grid, xshift=20mm]{Testing};
+                \node (optimalParam) [io, below of=grid, yshift=-15mm] {Optimal Parameters};
+                \node (crossVal) [process, below of=pretraining, xshift=-40mm] {Cross
+                Validation Split};
+                    \node (cvtraining) [io, below of=crossVal, xshift=20mm,
+                    yshift=-15mm]{Training};
+                    \node (cvtesting) [io, below of=crossVal, xshift=-20mm,
+                    yshift=-15mm]{Testing};
+                \node (classifierTraining) [process, below of=cvtraining,
+                yshift=-15mm] {Classifier Training};
+                \node (prediction) [process, below of=cvtesting,
+                yshift=-15mm] {Prediction and Scoring};
+            \node (validation) [io, below of=input, xshift=-50mm, yshift =
+            -60mm]{Validation};
+
+            \draw [arrow] (input) -- (pretraining);
+                \draw [arrow] (pretraining) -- (crossVal);
+                    \draw [arrow] (crossVal) -- (cvtraining);
+                        \draw [arrow] (cvtraining) -- (classifierTraining);
+                            \draw [dashed, ->] (classifierTraining) -- (prediction);
+                        \draw [arrow] (cvtraining) -- (prediction);
+                        \draw [arrow] (cvtesting) -- (prediction);
+                    \draw [arrow] (crossVal) -- (cvtesting);
+                \draw [arrow] (pretraining) -- (grid);
+                    \draw [arrow] (grid) -- (gridtraining);
+                    \draw [arrow] (grid) -- (gridtesting);
+                    \draw [arrow] (gridtraining) -- (grid);
+                    \draw [arrow] (gridtesting) -- (grid);
+                    \draw [arrow] (grid) -- (optimalParam);
+                        \draw [dashed, ->] (optimalParam) -- (classifierTraining);
+            \draw [arrow] (input) -- (validation);
+                \draw [arrow] (validation) -- (prediction);
+        \end{tikzpicture}
+        \caption{Classification}
+        \label{sfig:classification}
+    \end{subfigure}
+    \label{fig:flowcharts}
+    \caption{Flowcharts for the data preprocessing and classification pipeline.
+    Solid arrows denote flow of data, dashed arrows the influence by paramaters.
+    The nodes for the data labels, which are split accordingly, has been
+    omitted for clarity.}
+\end{figure}
+
+%\begin{figure}[h]
+%    \begin{tikzpicture}[thick,scale=0.48, every
+%        node/.style={scale=0.47}, node distance=15mm]
+%        %\note (start) [startstop] {Raw Data} 
+%        \node (rawdata) [io] {Spectral measurements};
+%        \node (split1) [process, below of=rawdata]
+%        {Split};
+%        \node (train) [io, below of=split1, xshift=-50mm]
+%        {Pre-Training};
+%        \node (preproc2) [process, below of=train]
+%        {Preprocessing};
+%        \node (ival) [io, below of=split1, xshift=50mm]
+%        {Validation};
+%        \node (preproc1) [process, below of=ival]
+%        {Preprocessing};
+%        \node (projection1) [process, below of=preproc1]
+%        {Projection};
+%        \node (SDCM) [process, below of=preproc2]
+%        {SDCM/PCA};
+%        \node (signatures) [io, below of=SDCM]
+%        {Signatures};
+%        \node (split2) [process, below of=signatures]
+%        {Split};
+%        \node (train2) [io, below of=split2,
+%        xshift=-25mm]{Training};
+%        \node (projectionTrain) [process, below of=train2,
+%        xshift=0mm]{Projection};
+%        \node (test) [io, below of=split2,
+%        xshift=25mm]{Testing};
+%        \node (projectionTest) [process, below of=test,
+%        xshift=0mm]{Projection};
+%        \node (training) [process, below of=split2, yshift=-15mm]
+%        {Model Training};
+%        \node (learningmodel) [io, below of=training]
+%        {Learning Model};
+%        \node (prediction) [process, below of=learningmodel, xshift =
+%        50mm]
+%        {Prediction};
+%        \node (accuracy) [startstop, below of=prediction]
+%        {Prediction metrics};
+%
+%        \draw [arrow] (rawdata) -- (split1);
+%            \draw [arrow] (split1) -- (train);
+%                \draw [arrow] (train) -- (preproc2);
+%                \draw [arrow] (preproc2) -- (SDCM);
+%                \draw [arrow] (SDCM) -- (signatures);
+%                \draw [arrow] (signatures) -- (split2);
+%                    \draw [arrow] (split2) -- (train2);
+%                    \draw [arrow] (train2) -- (training);
+%                    \draw [arrow] (split2) -- (test);
+%                    \draw [arrow] (test) -- (training);
+%                \draw [arrow] (training) -- (learningmodel);
+%                \draw [arrow] (learningmodel) -- (prediction);
+%            \draw [arrow] (split1) -- (ival);
+%                \draw [arrow] (ival) -- (preproc1);
+%                \draw [arrow] (preproc1) -- (prediction);
+%        \draw [arrow] (prediction) -- (accuracy);
+%        
+%    \end{tikzpicture}
+%\end{figure}

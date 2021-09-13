@@ -88,8 +88,12 @@ restriction that for each measurement, the meta data for type, origin, color,
 isPlastic and sampleID must be provided, which reduced the number of
 measurements to \todo{fill value}. Furthermore we did not split off any
 validation sets.
-\subsubsection*{PCA}
-\todo{fill with content!}
+%\subsubsection*{PCA}
+%Principle Component Analysis (PCA), first introduced by \todo{insert citation},
+%is a classic tool in data science used for dimensional reduction of large
+%datasets. It generates a set of orthogonal vectors which diagonalize the
+%covariance matrix of the data. \todo{write more}
+%\todo{fill with content!}
 \subsubsection*{SDCM}
 \label{ssub:methodsSDCM}
 SDCM (Signal Dissection by Correlation Maximisation) is a non-supervised
@@ -138,6 +142,25 @@ strongly the feature or sample participates in the signature.
 
 Typically, the number of signatures detected will be orders of magnitudes
 smaller than the number of input features, thus allowing for an effective
-dimensional reduction of the data. For classification purposes, we will feed the
-calculated strenghts \todo{or weights?} for each measurement into the
-classification pipeline.
+dimensional reduction of the data. 
+
+Once a set of signatures has been found in the \emph{preTraining} set, obtaining
+strengths and weights relative to these signatures for new data, i.e.
+\emph{validation} set is a non-trivial task, as the signature axes can be
+non-orthogonal, and the method is dissective rather than just a projection. The
+standard procedure is to repeat the dissection on the new data, while fixing the
+signature axes to the previously detected values. \todo{What exactly is the
+problem here? Signature axes should be fixed either way.}
+
+To circumvent this issue, we performed a weighted projection the new data onto
+the known signature axes \todo{insert math}. This removes some of the
+precision obtained by SDCM, as spectral features explained by a single signature
+can still produce significant projection values in other signatures, if the axes
+aren't sufficiently orthogonal.
+However, it ensures that all signature strengths are obtained relative to the
+same axes. For consistency, the \emph{preTraining} set was also projected onto its
+own axes. \todo{difference signatures strength, projection values} 
+
+For interpretation purposes this step isn't needed, as we only considered a
+single data set without validation splits. Here we used the output signature
+strengths and weights.
