@@ -21,17 +21,20 @@ particular batch. The relevant entries in the meta file are
     natural
     \item[SampleID:] Unique ID identifying the sample for each measurement
 \end{description}
+
+In the following, $i$ refers to the rows of the 
 \subsubsection*{Data preprocessing for classification}
 \label{ssub:preprocForClassification}
+A flowchart for the data processing pipeline before classification is shown in
+\autoref{sfig:dataprep}.
+
 First, the data (including the background measurement) was interpolated onto a
 common spectral axis. Here the number of spectral bins was kept equal the to the
-mean of number of bins in the overall set. \todo{Was interpolation even
-necessary in the final run?}. From each measurement the associated background
-measurement was subtracted. The data was concatenated into a single $x\times y$
-\todo{Werte einfügen} matrix. The peak of spectrometer laser is located at
+mean of number of bins in the overall set. From each measurement the associated background
+measurement was subtracted. The data was concatenated into a single \todo{value}matrix. The peak of spectrometer laser is located at
 \SI{408}{\nano\meter}\todo{Correct value}. As we don't expect any measurable
 excitations below the laser peak, the offset from the zero-line of each
-measurement $o_m^i$ is estimated by taking the median of the data in the spectral range
+measurement is estimated by taking the median of the data in the spectral range
 \SI{294}{\nano\meter} to \SI{400}{\nano\meter}. Similarly, we estimate the noise
 level $\eta^i$ of each measurement by calculating the standard deviation in that range.
 As we regard any offset of the spectra as systemic, we subtract it from the
@@ -80,20 +83,18 @@ might introduce artifacts in data sets that have a different median (e.g. due to
 being sampled differently), and thus descrease prediction accuracy in
 \emph{external} validation sets.\todo{Relevant? Alternatives?}
 
+We additionally performed classifications of spectra and PCA without median
+subtraction. As this did not significantly influence the results for PCA, only
+the spectra variant is kept in the presented results.
+
 \subsubsection*{Data preprocessing for interpretation}
 The data preprocessing for the interpretation of signatures followed essentially
-the same steps as in \autoref{ssub:preprocForClassification}. As we want to be
+the same steps as in the previous subsection. As we want to be
 able to interpret the discoverd clusters (signatures), we imposed the additional
 restriction that for each measurement, the meta data for type, origin, color,
 isPlastic and sampleID must be provided, which reduced the number of
-measurements to \todo{fill value}. Furthermore we did not split off any
+measurements to $1243$. Furthermore, we did not split off any
 validation sets.
-%\subsubsection*{PCA}
-%Principle Component Analysis (PCA), first introduced by \todo{insert citation},
-%is a classic tool in data science used for dimensional reduction of large
-%datasets. It generates a set of orthogonal vectors which diagonalize the
-%covariance matrix of the data. \todo{write more}
-%\todo{fill with content!}
 \subsubsection*{SDCM}
 \label{ssub:methodsSDCM}
 SDCM (Signal Dissection by Correlation Maximisation) is a non-supervised

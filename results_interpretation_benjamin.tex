@@ -3,27 +3,99 @@ Unsupervised dimensional reduction algorithms group high-dimensional data points
 into a smaller number of clusters based on the similarity of features. This motivates
 the idea of asigning a specific meaning or explanation to each cluster. 
 
-We compare 
-\begin{figure}[h]
+A \emph{specific subsignature} contains only mesaurements of a subset of labels,
+contains nearly all representatives of that subset and almost none of any other
+labels \todo{too unclear?}. Thus we can assign that particular subset of labels
+as an interpretation of that signature. 
+\todo{redo images with new selection rule}
+
+\begin{figure}[h]     
     \begin{subfigure}[b]{0.3\textwidth}
         \centering
         \includegraphics[width=\textwidth]{figures/hist_typeOriginColorId1.png}
+        \caption{Type/Origin/Color/Sample ID}
         \label{sfig:histSpecSig1}
-        \caption{Data preparation}
     \end{subfigure}
     \begin{subfigure}[b]{0.3\textwidth}
         \centering
         \includegraphics[width=\textwidth]{figures/hist_typeOriginColor.png}
+        \caption{Type/Origin/Color}
         \label{sfig:histSpecSig2}
-        \caption{Classification}
     \end{subfigure}
     \begin{subfigure}[b]{0.3\textwidth}
         \centering
         \includegraphics[width=\textwidth]{figures/hist_type.png}
+        \caption{Type}
         \label{sfig:histSpecSig3}
-        \caption{Classification}
     \end{subfigure}
-    \label{fig:histsSpecSig}
-    \caption{Distribution of the number of specific subsignatures for two
+    \caption{Distribution of the number of selecting subsignatures for three
     choices of categories.} 
+    \label{fig:histsSpecSig}
 \end{figure}
+\begin{table}
+    \centering
+    \begin{tabular}{c|c|c|c|c}
+        Categories & Weight Name& Significant & Mixing & Selecting   \\ 
+        \hline
+        \hline
+        Type/Origin/Color/Sample ID & SDCM Weights         &   28.904   &    27.972  &   8.8578\\  
+                                    & PCA Weights (soft)   &   29.869   &    2.0311  &  0.11947 \\ 
+                                    & PCA Weights (hard)   &   33.094   &    11.111  &  2.7479  \\
+        \hline
+        Type/Origin/Color& SDCM Weights         &   27.273   &    22.145  &  3.9627  \\
+                         & PCA Weights (soft)   &   30.585   &    1.3142  &  0.11947 \\
+                         & PCA Weights (hard)   &   33.214   &    7.6464  &  0.59737 \\
+        \hline
+        Type & SDCM Weights         &   21.678   &    13.986  &   0.6993 \\ 
+             & PCA Weights (soft)   &   22.461   &         0  &        0 \\ 
+             & PCA Weights (hard)   &   23.178   &    1.7921  &        0 \\
+    \end{tabular}
+    \caption{Percentage of subsignatures that are Significant, Mixing or
+    Selecting for three different choices of categories.}
+    \label{tab:selectingPercentages}
+\end{table}
+\begin{table}
+    \centering
+    \begin{tabular}{c|c|c|c|c}
+        Categories & Weight Name& Significant & Mixing & Selecting   \\ 
+        \hline
+        \hline
+        Type/Origin/Color/Sample ID& SDCM Weights         &   124   &  120   & 38\\  
+                                   & PCA Weights (soft)   &   250   &    17  &  1 \\ 
+                                   & PCA Weights (hard)   &   277   &    93  &  23  \\
+        \hline
+        Type/Origin/Color& SDCM Weights         &   117   &    95  &  17  \\
+                         & PCA Weights (soft)   &   256   &    11  &  1 \\
+                         & PCA Weights (hard)   &   278   &    64  &  5 \\
+        \hline
+        Type & SDCM Weights         &   93    &    60  &        3 \\ 
+             & PCA Weights (soft)   &   188   &     0  &        0 \\ 
+             & PCA Weights (hard)   &   194   &    15  &        0 \\
+    \end{tabular}
+    \caption{Total number of subsignatures that are Significant, Mixing or
+    Selecting for three different choices of categories.}
+    \label{tab:selectingTotals}
+\end{table}
+\autoref{tab:selectingPercentages} and \autoref{tab:selectingTotals} show the
+percentages and total numbers of the significant, mixing and selecting
+subsignatures\todo{Let PCA run through all PCs?}. For all three choices of
+categories, SDCM achieves the highest percentage and absolute number of both
+mixing and selecting subsignatures.
+
+\autoref{fig:histsSpecSig} shows the distribution of specfic subsignatures over
+the amount of labels contained in each explanation.\todo{Maybe change this to
+normalized plots?}. For the finest choice of categories
+\autoref{sfig:histSpecSig1}, PCA (hard) detects $23$ selecting signatures, each
+containing up to $26$ labels, but very few signatures selecting only one or two
+labels. SDCM conversly only detects signatures selecting only two or fewer
+labels. This demonstrates that SDCM can detect finer differences between
+datasets, singling out measurements that have been performed on the same material
+sample.\todo{Discussion -> problem large hetergoeneities?}. The labels selected
+by SDCM are displayed in \todo{table einfügen}. 
+
+Coarsening the categories
+(\autoref{fig:histSpecSig2},\autoref{fig:histSpecSig3})reduces the number of
+selecting subsignatures. This is expected, as mixing finer lables into a coarser
+set combines heterogeneities into a single label, which were previously represented
+on separe signatures. For the coarsest set of categories ("Type"), only SDCM is
+able to find selecting signatures.

@@ -1,26 +1,34 @@
 \subsection*{Classification}
-\subsubsection*{Data input}
 \subsubsection*{Classification metrics}
 \todo{Schreiben!}
 \subsubsection*{Classification pipeline}
-For classification a standard classifcation pipeline was set up using the python
-sklearn pipeline \todo{citation}. A diagram illustrating the pipeline is shown
-in \todo{pipeline machen}.
+A flowchart for the classification is shown in \autoref{sfig:classification}.
 
-For each preTraining/validation split, each classifier was validated by n-fold
-\todo{n=?} cross validation over a range of parameters. The selection of
+For classification a standard classifcation pipeline was set up using the python
+sklearn pipeline \todo{citation}. Five classifier models were used:
+\begin{itemize}
+    \item Naive Bayes (\texttt{sklearn.naive\_bayes.GaussianNB})
+    \item SVC (\texttt{sklearn.svm.SVC}) 
+    \item NuSVC (\texttt{sklearn.svm.NuSVC}) 
+    \item Logistic Regression (\texttt{sklearn.linear\_model.LogisticRegression}) 
+    \item Random Forest (\texttt{sklearn.ensemble.RandomForestClassifier}) 
+\end{itemize}
+
+For each preTraining/validation split, each classifier was evaluated by $25$-fold
+cross validation over a range of parameters. The selection of
 parameters is displayed in \todo{reference to table}. The optimally performing
 set of parameters (measured by accuracy) are used for further classification.
  
-Next, for cross-validation, preTraining is split n\todo{wert einfügen}-times
+Next, for cross-validation, preTraining is split $144$ times
 into \emph{training}(\SI{80}{\percent}) and \emph{testing}(\SI{20}{\percent}).
 Over each split, the classifier is trained with the optimized parameters on
 \emph{training}, and the classification metrics are evaluated on
 \emph{training},\emph{testing} and \emph{validation}.
 
-The final results were averaged by mean over all $n\times m$\todo{wert einfügen}
-calculations. The errors were the standard deviation over all $n\times
-m$\todo{wert einfügen} calculations.
+The final results were averaged by mean over all $10\times 144$\todo{Change
+number if larger splits are available}
+calculations. The errors were the standard deviation over all $10\times
+144$\todo{wert einfügen} calculations.
 
 For each classification, a confusion matrix normalized along the rows was
 generated based on the predictions of the classifier. All confusion matrices
@@ -82,8 +90,8 @@ were averaged by mean, and the error calculated by the standard deviation.
             \draw [dashed, ->] (dimensionalReduction) -- (projectionValidation);
             \draw [dashed, ->] (dimensionalReduction.west) to [out=180, in=180] (projectionPreTraining.west);
         \end{tikzpicture}
-        \label{sfig:dataprep}
         \caption{Data preparation}
+        \label{sfig:dataprep}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.49\textwidth}

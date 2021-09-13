@@ -63,14 +63,20 @@ $\ssig{k}$. We are interested in subsignatures where $\abs{l}{\ssig{k}}\approx 1
 entirely excluded from $\ssig{k}$). This motivates the definition of
 $\mems{l}{\ssig{k}}$. Lastly we can calculate the average $\mems{l}{\ssig{k}}$
 of $\ssig{k}$, weighted by $N_l$. The more specific a subsignature is to a
-subset of labels of $\labelCol{\infoCat}$, the higher $\avmems{\ssig{k}}$ is. We
-define a signature to be selecting if it contains at least one label with
-$\pval{\ssig{k}}{l}\le \tpval$ and $\aws{\ssig{k}}{l} \ge \taw$, and
-$\avmems{\ssig{k}}\ge\tmem$. As in some specific signatures the significant
-weights are either strictly positive or negative, we applied to following
-correction to remove redundancies:
+subset of labels of $\labelCol{\infoCat}$, the higher $\avmems{\ssig{k}}$ is. 
+
+We say a subsignature is 
 \begin{itemize}
-    \item If $k^+, k^-, k^0$ are specific, only consider $k^0$
+    \item\textbf{significant} if it contains at least one label with
+        $\pval{\ssig{k}}{l}\le \tpval$
+    \item\textbf{mixing} if it is significant and contains at least one label
+        with $\aws{\ssig{k}}{l} \ge \taw$
+    \item\textbf{selecting} if it is mixing and $\avmems{\ssig{k}} \ge \taw$
+\end{itemize}
+As in some specific signatures the significant weights are either strictly
+positive or negative, we applied to following correction to remove
+redundancies:
+\begin{itemize}
     \item If either $k^+, k^0$ or $k^-, k^0$ are specific, only consider $k^+$
         or $k^-$.
 \end{itemize}
