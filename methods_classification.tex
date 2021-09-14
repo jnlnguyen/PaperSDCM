@@ -1,0 +1,148 @@
+\subsection*{Classification}
+\subsubsection*{Classification metrics}
+\todo{Schreiben!}
+\subsubsection*{Classification pipeline}
+A flowchart for the classification is shown in \autoref{sfig:classification}.
+
+For classification a standard classifcation pipeline was set up using the python
+sklearn pipeline \todo{citation}. Five classifier models were used:
+\begin{itemize}
+    \item Naive Bayes (\texttt{sklearn.naive\_bayes.GaussianNB})
+    \item SVC (\texttt{sklearn.svm.SVC}) 
+    \item NuSVC (\texttt{sklearn.svm.NuSVC}) 
+    \item Logistic Regression (\texttt{sklearn.linear\_model.LogisticRegression}) 
+    \item Random Forest (\texttt{sklearn.ensemble.RandomForestClassifier}) 
+\end{itemize}
+
+For each preTraining/validation split, each classifier was evaluated by $25$-fold
+cross validation over a range of parameters. The selection of
+parameters is displayed in \todo{reference to table}. The optimally performing
+set of parameters (measured by accuracy) are used for further classification.
+ 
+Next, for cross-validation, preTraining is split $144$ times
+into \emph{training}(\SI{80}{\percent}) and \emph{testing}(\SI{20}{\percent}).
+Over each split, the classifier is trained with the optimized parameters on
+\emph{training}, and the classification metrics are evaluated on
+\emph{training},\emph{testing} and \emph{validation}.
+
+The final results were averaged by mean over all $10\times 144$\todo{Change
+number if larger splits are available}
+calculations. The errors were the standard deviation over all $10\times
+144$\todo{wert einfügen} calculations.
+
+For each classification, a confusion matrix normalized along the rows was
+generated based on the predictions of the classifier. All confusion matrices
+were averaged by mean, and the error calculated by the standard deviation.
+
+\begin{figure}
+    \centering
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \begin{tikzpicture}[thick,scale=0.48, every
+            node/.style={scale=0.47}, node distance=15mm]
+            %\note (start) [startstop] {Raw Data} 
+            \node (rawdata) [io] {Spectral measurements};
+            \node (split) [process, below of=rawdata]
+            {Split};
+
+            \node (train) [io, below of=split, xshift=-35mm]
+            {Pre-Training};
+            \node (fDesignPreTrain) [process, below of=train]
+            {Feature Design};
+            \node (batchProcessingPreTraining) [process, below
+            of=fDesignPreTrain]{Median Subtraction};
+            \node (dimensionalReduction) [process, below
+            of=batchProcessingPreTraining]
+            {SDCM/PCA/Passthrough};
+            \node (projectionPreTraining) [process, below
+            of=dimensionalReduction]
+            {Projection/Passthrough};
+
+            \node (validation) [io, below of=split, xshift=35mm]
+            {Validation};
+            \node (fDesignValidation) [process, below of=validation]
+            {Feature Design};
+            \node (batchProcessingValidation) [process, below of=fDesignValidation]
+            {Median Subtraction};
+            \node (projectionValidation) [process, below
+            of=batchProcessingValidation]
+            {Projection/Passthrough};
+
+            \node (Input) [io, below
+            of=rawdata, yshift=-90mm]
+            {Input};
+
+            \draw [arrow] (rawdata) -- (split);
+                \draw [arrow] (split) -- (train);
+                    \draw [arrow] (train) -- (fDesignPreTrain);
+                    \draw [arrow] (fDesignPreTrain) -- (batchProcessingPreTraining);
+                    \draw [arrow] (batchProcessingPreTraining) --
+                    (dimensionalReduction);
+                    \draw [arrow] (dimensionalReduction) -- (projectionPreTraining);
+                        \draw [arrow] (projectionPreTraining) -- (Input);
+                \draw [arrow] (split) -- (validation);
+                    \draw [arrow] (validation) -- (fDesignValidation);
+                    \draw [arrow] (fDesignValidation) -- (batchProcessingValidation);
+                    \draw [arrow] (batchProcessingValidation) --
+                    (projectionValidation);
+                    \draw [arrow] (projectionValidation) -- (Input);
+            \draw [dashed, ->] (batchProcessingPreTraining) -- (batchProcessingValidation);
+            \draw [dashed, ->] (dimensionalReduction) -- (projectionValidation);
+            \draw [dashed, ->] (dimensionalReduction.west) to [out=180, in=180] (projectionPreTraining.west);
+        \end{tikzpicture}
+        \caption{Data preparation}
+        \label{sfig:dataprep}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \begin{tikzpicture}[thick,scale=0.48, every
+            node/.style={scale=0.47}, node distance=15mm]
+            %\note (start) [startstop] {Raw Data} 
+            \node (input) [io] {input};
+            \node (pretraining) [io, below of=input, xshift=50mm, yshift = -15mm]{Pre-Training};
+                \node (grid) [process, below of=pretraining, xshift=40mm] {Grid Search};
+                    \node (gridtraining) [io, below of=grid, xshift=-20mm]{Training};
+                    \node (gridtesting) [io, below of=grid, xshift=20mm]{Testing};
+                \node (optimalParam) [io, below of=grid, yshift=-15mm] {Optimal Parameters};
+                \node (crossVal) [process, below of=pretraining, xshift=-40mm] {Cross
+                Validation Split};
+                    \node (cvtraining) [io, below of=crossVal, xshift=20mm,
+                    yshift=-15mm]{Training};
+                    \node (cvtesting) [io, below of=crossVal, xshift=-20mm,
+                    yshift=-15mm]{Testing};
+                \node (classifierTraining) [process, below of=cvtraining,
+                yshift=-15mm] {Classifier Training};
+                \node (prediction) [process, below of=cvtesting,
+                yshift=-15mm] {Prediction and Scoring};
+            \node (validation) [io, below of=input, xshift=-50mm, yshift =
+            -60mm]{Validation};
+
+            \draw [arrow] (input) -- (pretraining);
+                \draw [arrow] (pretraining) -- (crossVal);
+                    \draw [arrow] (crossVal) -- (cvtraining);
+                        \draw [arrow] (cvtraining) -- (classifierTraining);
+                            \draw [dashed, ->] (classifierTraining) -- (prediction);
+                        \draw [arrow] (cvtraining) -- (prediction);
+                        \draw [arrow] (cvtesting) -- (prediction);
+                    \draw [arrow] (crossVal) -- (cvtesting);
+                \draw [arrow] (pretraining) -- (grid);
+                    \draw [arrow] (grid) -- (gridtraining);
+                    \draw [arrow] (grid) -- (gridtesting);
+                    \draw [arrow] (gridtraining) -- (grid);
+                    \draw [arrow] (gridtesting) -- (grid);
+                    \draw [arrow] (grid) -- (optimalParam);
+                        \draw [dashed, ->] (optimalParam) -- (classifierTraining);
+            \draw [arrow] (input) -- (validation);
+                \draw [arrow] (validation) -- (prediction);
+        \end{tikzpicture}
+        \caption{Classification}
+        \label{sfig:classification}
+    \end{subfigure}
+    \label{fig:flowcharts}
+    \caption{Flowcharts for the data preprocessing and classification pipeline.
+    Solid arrows denote flow of data, dashed arrows the influence by paramaters.
+    The nodes for the data labels, which are split accordingly, has been
+    omitted for clarity.}
+\end{figure}
+
