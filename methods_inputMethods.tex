@@ -145,7 +145,24 @@ Typically, the number of signatures detected will be orders of magnitudes
 smaller than the number of input features, thus allowing for an effective
 dimensional reduction of the data. 
 
-Once a set of signatures has been found in the \emph{preTraining} set, obtaining
+
+\subsubsection*{Dimensional reduction}
+We used SDCM and PCA to reduce the number of dimensions of the data, and to
+obtain signature strenghts and weights in the case of SDCM, and PC axes in
+feature space and PC coefficients in the case of PCA. For classification, this
+reduction was performed once on each \emph{preTraining} set. For interpretation,
+it was performed once on the data. 
+
+To keep the number of principal components to a comparable size with the
+signatures in SDCM, and to achieve an actual dimensional reduction, we chose the
+first $n$ principal components that account for $\SI{99}{\percent}$ of the
+variance \todo{change this if necessary}.
+
+The distribution of number of signatures found by SDCM and principal components
+found by PCA is show in \todo{this
+probably has to be done }
+
+Once a set of SDCM signatures has been found in the \emph{preTraining} set, obtaining
 strengths and weights relative to these signatures for new data, i.e.
 \emph{validation} set is a non-trivial task, as the signature axes can be
 non-orthogonal, and the method is dissective rather than just a projection. The
