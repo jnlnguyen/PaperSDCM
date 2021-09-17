@@ -1,32 +1,27 @@
 \subsection*{Performance evaluation of ML models}
-We compare the performances between the classification models, by evaluating the
-performance metrics \textit{accuracy}, \textit{precision}, \textit{recall} and \textit{f1}.
-\autoref{fig:metricComparison} show plots of the values with their standard deviations.
-All values are also presented in the supplements in Tables \todo{Result tables
-	in supplements}. 
-The plot shows that the learning method has the biggest influence on the model's performance.
-
+The prediction performance of a ML model depends on the intended application, the data transformation algorithm and the learning method.
+Therefore, we first compare all ML models that are generated with all possible combinations of transformation algorithm and learning method.
+For our evaluation, we calculate the performance metrics \textit{accuracy}, \textit{precision}, \textit{recall} and \textit{f1}.
+\autoref{fig:metricComparison} gives an overview of the metrics for all generated models.
+We immediately see that the learning method has the biggest influence on the model's performance.
 Models generated with the SVC, NuSVC, Logistic Regression and the Random Forest
-algorithms achieve accuracy values over \SI{90}{\percent} while it drops by
-\SI{20}{\percent} for models generated the Naive Bayes algorithm.  Thus, for
-plastic classification the former two methods are likely to be more suitable in
-the future.
+algorithms achieve values over \SI{90}{\percent} for all metrics while it drops by
+\SI{###}{\percent} for models generated with the naive Bayes method.
 
-The dimension reduction technique, on the other hand, has little influence on
-the performance. On the SVM models both PCA and and SDCM score comparably. SDCM
-scores better on the linear Logistic Regression, and PCA on the highly-nonlinear
-Random Forest model.
+The influence of the transformation algorithm, on the other hand, depends on the selected learning method.
+We see similar values for models generated with the NuSVC and the logistic regression method, while for the rest, a data dimension reduction improves the performance by at least \SI{20}{\percent}.
+
 
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=\textwidth]{figures/metric_evaluation.png}
-	\label{fig:metricComparison}
 	\caption{Comparison of classification results for different metrics. The
 		black bars represent the standard deviations of all validations. As the
 		Naive Bayes model scores significantly worse in all metrics than the other
 		classifiers, it has been omitted from the image. Similarly, the input method
 		PCA (no batchprocessing) has been omitted, as it scores equivalenlty to PCA
 		on all metrics.}
+	\label{fig:metricComparison}
 \end{figure}
 \subsection*{Classification performance of ML models}
 
@@ -55,4 +50,22 @@ These observations show, that more data is required so that the dimension
 reduction techniques can capture the spectral signatures to identify the
 classes.\todo{This paragraph needs some work}
 
+Performance values of ML models:
+-	Kommentar zu overfitting
+-	Conclusion erst nach präsentation der daten
+-	Kommentar zum Ergebniss, dass SDCM für lineare Methoden besser ist.
+o	Was impliziert das? Wann sind lin. Methoden besser? Sind lin methoden für unser problem besser?
+-	„Dimension red. technique…has little influence on the performance“ : Aussage stimmt nicht mehr wenn man sich spectra anschaut. Ist Übergang von spectra auf PCA und SDCM nicht logisch wegen curse of dimensionality?
+-	Aussage:
+o	Alle metriken über  90
+	Sdcm is besser bei linear
+	Pca besser bei nicht linear
+Figure 1:
+-	NuSvc rauslassen
+-	Precision und Recall wichtig wenn f1 genutzt wird?
+-	Naive Bayes rauslassen
+Classification performance of ML models:
+-	PCA and SDCM modelle sind vergleichbar
+-	PCA and SDCM erhöhen die PVC Detektion.
+o	Wie ist die PVC detektion bei anderen Techniken?
 
