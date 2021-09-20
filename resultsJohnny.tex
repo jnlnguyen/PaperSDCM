@@ -1,28 +1,27 @@
 \subsection*{Performance evaluation of ML models}
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=\textwidth]{figures/metric_evaluation.png}
+	\caption{Performance overview of ML models for plastic classification. 
+		The black bars represent the standard deviations of the performance metrics.}
+	\label{fig:metricComparison}
+\end{figure}
 The prediction performance of a ML model depends on the intended application, the data transformation algorithm and the learning method.
 Therefore, we first compare all ML models that are generated with all possible combinations of transformation algorithm and learning method.
 For our evaluation, we calculate the performance metrics \textit{accuracy}, \textit{precision}, \textit{recall} and \textit{f1}.
 \autoref{fig:metricComparison} gives an overview of the metrics for all generated models.
 We immediately see that the learning method has the biggest influence on the model's performance.
-Models generated with the SVC, NuSVC, Logistic Regression and the Random Forest
-algorithms achieve values over \SI{90}{\percent} for all metrics while it drops by
-\SI{###}{\percent} for models generated with the naive Bayes method.
+Models generated with the SVC, NuSVC, Logistic Regression and the Random Forest algorithms achieve values over \SI{90}{\percent} for all metrics.
+On the other hand, it drops by \textbf{XXX} for models generated with the naive Bayes method.
 
 The influence of the transformation algorithm, on the other hand, depends on the selected learning method.
-We see similar values for models generated with the NuSVC and the logistic regression method, while for the rest, a data dimension reduction improves the performance by at least \SI{20}{\percent}.
+We find similar performances for models generated with the NuSVC and the logistic regression method, while for the rest, a data dimension reduction improves the performance by at least \SI{2}{\percent}.
+Interestingly, we see a trend that linear classifiers, i.e. SVC, NuSVC and logistic regression, work better with SDCM transformed data while non-linear classifiers, i.e. naive Bayesian work best with PCA transformed data.
 
+Our evalutation shows clearly that the prediction performance for most of the ML models is high.
+Slight improvements can be achieved by chosing the right combination of data transformation and classifier.
+Note, that further improvements may also be possible by optimising the hyperparameters associated with the selected classifier.
 
-\begin{figure}[ht]
-	\centering
-	\includegraphics[width=\textwidth]{figures/metric_evaluation.png}
-	\caption{Comparison of classification results for different metrics. The
-		black bars represent the standard deviations of all validations. As the
-		Naive Bayes model scores significantly worse in all metrics than the other
-		classifiers, it has been omitted from the image. Similarly, the input method
-		PCA (no batchprocessing) has been omitted, as it scores equivalenlty to PCA
-		on all metrics.}
-	\label{fig:metricComparison}
-\end{figure}
 \subsection*{Classification performance of ML models}
 
 \begin{figure}[ht]
@@ -37,35 +36,7 @@ We see similar values for models generated with the NuSVC and the logistic regre
 	\label{fig:confusionMatrix}
 \end{figure}
 
-Next, we evaluate the performance of our models with respect to the different sample types in our dataset.
-Figure~\ref{fig:confusionMatrix} presents a confusion matrix of all high-scoring models in this study.
-
-For both spectral input methods, there is a signficant confusion of PVC and
-nonplastics. These classes are known to have very similar spectra \todo{image?}.
-
-The image reveals that the performance for an individual class depends on the dimension reduction technique and learning method.
-For example, a model that uses random forest and SDCM-transformed data is better at identifying PA than a random forest model with PCA-transformed data.
-We also observe trends that are present in all models: first, PP gets mixed up as PE and second, PVC gets mixed up as a non-plastic material.
-These observations show, that more data is required so that the dimension
-reduction techniques can capture the spectral signatures to identify the
-classes.\todo{This paragraph needs some work}
-
-Performance values of ML models:
--	Kommentar zu overfitting
--	Conclusion erst nach präsentation der daten
--	Kommentar zum Ergebniss, dass SDCM für lineare Methoden besser ist.
-o	Was impliziert das? Wann sind lin. Methoden besser? Sind lin methoden für unser problem besser?
--	„Dimension red. technique…has little influence on the performance“ : Aussage stimmt nicht mehr wenn man sich spectra anschaut. Ist Übergang von spectra auf PCA und SDCM nicht logisch wegen curse of dimensionality?
--	Aussage:
-o	Alle metriken über  90
-	Sdcm is besser bei linear
-	Pca besser bei nicht linear
-Figure 1:
--	NuSvc rauslassen
--	Precision und Recall wichtig wenn f1 genutzt wird?
--	Naive Bayes rauslassen
-Classification performance of ML models:
--	PCA and SDCM modelle sind vergleichbar
--	PCA and SDCM erhöhen die PVC Detektion.
-o	Wie ist die PVC detektion bei anderen Techniken?
-
+Different combintations of data transformation technique and classifier may work best for certain sample types in our dataset.
+\autoref{fig:confusionMatrix} presents a confusion matrix of all ML models generated with metric values over \SI{90}{\percent}.
+We see that without any data transformation, i.e. spectra and spetra (no batchprocessing), ML models confuse PVC samples as nonplastic samples whereas with PCA and SDCM this problem is no longer present.
+Furthermore, we see similar performances for all ML models that are generated with PCA- and SDCM-transformed data.
