@@ -1,8 +1,8 @@
 \section*{Introduction}
 Our planet is drowning in plastic litter that finds its way into our food and body over time.
-An estimation showed that in 2010 at least 4.8 million tons of plastic litter has already entered our ocean\cite{Jambeck2015a}.
-Without an effective waste management plan this amount will continue to grow\cite{Jambeck2015a, Geyer2017}. 
-Once in our environment, plastic can persist for decades as most types are resistant to natural degradation processes\cite{Chamas2020}.
+An estimation in 2010 found that at least 4.8 million tons of plastic litter has already entered our ocean\cite{Jambeck2015a}.
+Without an effective waste management plan this amount will continue to grow every year\cite{Jambeck2015a, Geyer2017}. 
+Plastic litter can persist for decades as most types are resistant to natural degradation processes\cite{Chamas2020}.
 Environmental influences, however, can cause it to disintegrate into micron-sized particles commonly known as microplastics\cite{Thompson2004, Julienne2019, Zhang2021, Song2017, Duis2016}.
 Almost invisible to the eye, they are impossible to avoid: we find them in nearly every corner of our planet\cite{Duis2016,Chiba2018,Napper2020,Eerkes-Medrano2015,Andrady2011,Allen2019a}, in animals \cite{Barboza2020,Haave2021, Jamieson2019} and even in our food\cite{Koelmans2019,Zhang2020a}.
 Since 2021, we also have the first evidence of microplastics in our organs, when Ragusa et al. detected them in the human placenta\cite{Ragusa2021}.
@@ -11,7 +11,7 @@ Plastic litter is highly diverse due to environmental influences and the sheer e
 Therefore, to evaluate their detrimental effects on animals and humans, we need a deeper insight on the sample's origins\cite{Prata2020, Campanale2020, Lim2021}.
 Here, tools to detect and classify plastic litter at different stages play an indispensable role.
 Studies on plastic pollution commonly use Raman and Fourier transform infrared (FTIR) spectroscopy solutions to analyse plastic samples\cite{Prata2019,Loder2015,Sun2019,Zhang2020b}.
-Both techniques, however, come with physical limitations\cite{Araujo2018a, Loder2015,Xu2019} and hence, some plastic litter types remain undetected to date.
+Both techniques, however, come with physical limitations\cite{Araujo2018a, Loder2015,Xu2019} and hence, some plastic litter types may remain undetected to date.
 
 Most recently, Ornik et al. \cite{Ornik2020} used photoluminescence (PL) spectroscopy for plastic identification.
 By comparing spectral intensity ratios between different samples, they sucessfully distinguished plastics from non-plastic samples from the riverine and marine environment.
@@ -22,16 +22,17 @@ One possible alternative is to measure a part of these variations and integrate 
 Once implemented, algorithms and mathematical models can help unraveling the plastic sample's origin.
 
 For predictions that account for data variations, machine learning (ML) models are prominent candidates.
-To generate a plastic waste prediction model, we apply a selected learning method on the labeled spectral dataset.
-The model's performance partially depends on the number of input variables in a dataset, which, in our case, is the measured intensity for each channel of our spectrometer.
+We can generate a plastic waste prediction model by applying a classification method on the labeled spectral dataset.
+The model's performance partially depends on the number of input variables in a dataset.
+In our case this is the measured intensity for each channel of our spectrometer.
 To improve the performance, it is common practice to reduce the number of variables while retaining the essential data information \cite{Aggarwal2001,Fodor2002}.
-An analysis of the stripped-down dataset can reveal signatures, which are essentially selection criterea, for groups of samples with common properties, such as, plastic type or color. 
+An analysis of the stripped-down dataset can reveal signatures for groups of samples with common properties, such as, plastic type or color. 
 The efficiency to identify and capture these signatures depends on the selected transformation algorithm.
 Here, a recently published technique termed as signal dissection by correlation maximization (SDCM) stands out which successfully discovered new hidden signatures in a gene expression dataset \cite{Grau2019}.
 This is particularly attractive for PL-based plastic litter detection as it can identify unique subspectra that only occur in specific samples or sample types.
 
 In this report, we demonstrate two key points:
 first, ML is the method of choice for PL-based sample identification; and second, SDCM has a superior ability to identify unique sample type signatures.
-The latter is advanteagous as it improves our ability to determine a single source for the sample.
-To demonstrate this, we generate ML models with one of five different learning methods and one of four transformation algorithms.
+The latter is advanteagous as it improves our ability to track the sample origin down to a single source.
+To demonstrate this, we generate ML models with one of five different classification methods and one of four transformation algorithms.
 By comparing model's performance metrics, e.g. the probability that a model-based prediction is correct, and the extracted signatures we find that SDCM-based ML models outperform their counterparts.
