@@ -1,28 +1,33 @@
 \subsection*{Input methods and dimensional reduction}
 
-We compare the classification results of three different inputs: Using
+We compared the classification results of three different inputs: Using
 the processed spectra (\textbf{spectra}), after application of principle component analysis
 (\textbf{PCA}) and after application of signal dissection by correlation
-maximisation (\textbf{SDCM}).
+maximisation (\textbf{SDCM}). For the interpretation of signatures and principal
+components, we used spectra after PCA and SDCM transformation.
 
 \subsubsection*{Data format}
 The measurement data exists as a set of files containing absolute intensity
 values in the range of \SI{294}{\nano\meter} to \SI{1002}{\nano\meter}. Each
-file was associated a meta-file containing information about the measured
+file has associated a meta-file containing information about the measured
 sample, and a background file, containing the background measurement for that
 particular batch. The relevant entries in the meta file are
 \begin{description}
     \item[Type:] Name of measured sample material. Here all PE classes (HDPE,
     LDPE) are grouped as PE.
     \item[Origin:] Either name of manufacturer or location of discovery or
-    purchase
+        purchase. Here, all retail plastics are labeled \emph{supermarket}, that
+        is we did not distinguish between different retailers.
     \item[Color:] Natural color of the sample
     \item[isPlastic:] Boolean value determining whether sample was plastic or
-    natural
-    \item[SampleID:] Unique ID identifying the sample for each measurement
+    %natural
+    \item[SampleID:] Unique ID identifying the material sample for each measurement
+    \item[BackgroundID:] Unique ID identifying the measurement session 
 \end{description}
 
-In the following, $i$ refers to the rows of the 
+In the following, $i$ enumerates the set of $N_m$ measurements $m^i \in \mSet$, and $j$
+enumerates the set of $N_f$ features (spectral bins) $f_j \in \fSet$.
+
 \subsubsection*{Data preprocessing for classification}
 \label{ssub:preprocForClassification}
 A flowchart for the data processing pipeline before classification is shown in
@@ -31,9 +36,10 @@ A flowchart for the data processing pipeline before classification is shown in
 First, the data (including the background measurement) was interpolated onto a
 common spectral axis. Here the number of spectral bins was kept equal the to the
 mean of number of bins in the overall set. From each measurement the associated background
-measurement was subtracted. The data was concatenated into a single \todo{value}matrix. The peak of spectrometer laser is located at
-\SI{408}{\nano\meter}\todo{Correct value}. As we don't expect any measurable
-excitations below the laser peak, the offset from the zero-line of each
+measurement was subtracted. The data was concatenated into a single \todo{insert
+n x m}matrix. The peak of spectrometer laser is located at
+\SI{405}{\nano\meter}. As we don't expect any measurable
+excitations below the laser peak, the offset from the zero-line $O^i$ of each
 measurement is estimated by taking the median of the data in the spectral range
 \SI{294}{\nano\meter} to \SI{400}{\nano\meter}. Similarly, we estimate the noise
 level $\eta^i$ of each measurement by calculating the standard deviation in that range.
@@ -41,47 +47,43 @@ As we regard any offset of the spectra as systemic, we subtract it from the
 data.
 
 To detect the measurements with experimental overexposure, we determined for
-each sample the maximum $max_{\text{smoothed}}^i$ of its smoothed spectrum
-$s_{\text{movMedian,20}}$,
-where the spectrum was smoothed with a running median of windowsize
-\SI{20}{\nano\meter}. The exposure level was calulated by
-$\epsilon_{\text{exposure}} = \frac{o_m^i}{max_{\text{smoothed}}^i}$.
-Measurements with $\epsilon_{\text{exposure}} < 0.5$ were removed from the data.
+each sample the maximum $M^i$ of its smoothed spectrum
+where the spectrum was smoothed with a running median of window size
+\SI{20}{\nano\meter}. The exposure level was calculated as
+$E^i = \frac{O^i}{M^i}$.
+Measurements with $E^i < 0.5$ were removed from the data.
 \todo{how many were removed?}
 
-The power of the spectrum was calculated as $P^i =
-\sqrt{\mean(s_{\text{movMedian,20}}^2)}$, where the squaring was performed for
-each spectral bin, and the mean is taken across the whole spectrum. The
+The power of the spectrum was calculated as $P^i = \sqrt{\frac{1}{N_f}
+\sum_{j=1\ldots N_f} \qty(\tilde{s}^i_j)^2}$, where $\tilde{s}^i_j$ is the $i$th spectral bin of the running-median smoothed measurement $m^j$. The
 signal-to-noise-ratio was calculated as $SNR^i = \frac{P^i}{\eta^i}$.
 Measurements with $SNR^i < 2$ were removed from the data. \todo{How many meas.
 were dropped?}
 
-Only measurements for which the precise originating sample is known were kept in
-the data.
+Only measurements for which \emph{SampleID} is known were kept in the data.
 
-The data to be processed was selected in the ranges
-\SIrange{410}{680}{\nano\meter} (\emph{short}) and
-\SIrange{410}{1002}{\nano\meter} (\emph{long}). \todo{Change this if only one
-version is used}
+For classification, we used the whole spectrum in the range
+\SIrange{410}{1002}{\nano\meter} (\emph{long}). For inspection purposes, we
+additionally considered the range \SIrange{410}{680}{\nano\meter}
+(\emph{short}).
 
-Each measurement was divided by its norm $n^i$ which was calculated via
-\todo{Decide on power, integral or max}. This step is especially important for
-SDCM, as otherwise the regression steps (see \autoref{sssub:methodsSDCM}) might
-not converge, or converge very slowly. \todo{Discuss choice of norm with spectra
-pictures}
+Each measurement was divided by its norm $n^i$ which was calculated via the
+Matlab \texttt{trapz} integration function with the spectral range as $x$
+dimension.  This step is especially important for SDCM, as otherwise the
+regression steps (see \autoref{sssub:methodsSDCM}) might not converge, or
+converge very slowly.
 
-In the next step, we performed a\todo{or several, if mutliple IV splits are
-made} startified split of the data into a
-\emph{preTraining}(\SI{80}{\percent}) and \emph{validation}(\SI{20}{\percent})
-set. The material type and sample-ID information were used as stratification
-variables.
+In the next step, we performed $25$ \todo{check this number before submitting}
+splits of the data into a \emph{preTraining} (\SI{80}{\percent}) and
+\emph{validation} (\SI{20}{\percent}) set. The material type and sample-ID
+information were used as stratification variables.
 
 Lastly we calculated the median of each spectral bin in the preTraining set and
 subtracted it from each measurement in both the preTraining and validation set.
 This centers the data at the zero level of each spectral bin. Note that this
 might introduce artifacts in data sets that have a different median (e.g. due to
-being sampled differently), and thus descrease prediction accuracy in
-\emph{external} validation sets.\todo{Relevant? Alternatives?}
+being sampled differently), and thus decrease prediction accuracy in
+\emph{external} validation sets.
 
 We additionally performed classifications of spectra and PCA without median
 subtraction. As this did not significantly influence the results for PCA, only
@@ -90,55 +92,64 @@ the spectra variant is kept in the presented results.
 \subsubsection*{Data preprocessing for interpretation}
 The data preprocessing for the interpretation of signatures followed essentially
 the same steps as in the previous subsection. As we want to be
-able to interpret the discoverd clusters (signatures), we imposed the additional
+able to interpret the discovered (signatures), we imposed the additional
 restriction that for each measurement, the meta data for type, origin, color,
 isPlastic and sampleID must be provided, which reduced the number of
 measurements to $1243$. Furthermore, we did not split off any
 validation sets.
 \subsubsection*{SDCM}
 \label{ssub:methodsSDCM}
-SDCM (Signal Dissection by Correlation Maximisation) is a non-supervised
-algorithm for the detection of superposed correlations in high-dimensional
-datasets. Initially developed for the application in bioinformatics for the
-dissection of gene expression data, it has since been successfully applied
-in other areas such as photoluminescence spectra of microplastic particles,
-or \todo{insert other area}.
+SDCM (Signal Dissection by Correlation
+Maximisation)\cite{Grau2019} is a non-supervised algorithm for
+the detection of superposed correlations in high-dimensional datasets.
+Conceptionally it can be thought of as an extension of PCA for non-orthogonal
+axes of correlation, where instead projecting out detected dimensions, the
+detected axes of correlation are iteratively subtracted from the data. Initially
+developed for the application in bioinformatics for the clustering of gene
+expression data, it can be generically applied to any high-dimensional data
+containing (overlapping) subspaces of correlated measurements.
 
-We denote $\mathbb{M}^{x,y}$ as the set of real valued $x \times y$
-matrices, and $n_f$ as the number of features in the data and $n_s$ the
-number of measurements.
+We denote $\mathbb{M}^{N_f,N_m}$ as the set of real valued $N_f \times N_m$ matrices,
+where $N_f$ is the number of features in the data and $N_m$ the number of
+measurements. We speak of \emph{feature space} if we consider the $N_f$ row vectors of
+features in $M \in \mathbb{M}^{N_f,N_m}$, and of \emph{measurement space} if
+we consider the $N_m$ column vectors of measurements in $M \in \mathbb{M}^{N_f,
+N_m}$.
 
-At its basis, SDCM assumes the data $\mathcal{L} \in \mathbb{M}^{n_f, n_s}$,
-exists as a superposition $\mathcal{L} = \sum_{k=1}^n E_k + \eta$ of submatrices
-$E_k \in \mathbb{M}^{n_f^k, n_s^k}$ and residual noise $\eta$. We interpret the
-$E_k$ as the physical meaningful correlations in the data.
+SDCM assumes the data $\mathcal{L} \in \mathbb{M}^{N_f, N_m}$, exists as a
+superposition $\mathcal{L} = \sum_{k=1}^n E_k + \eta$ of submatrices $E_k \in
+\mathbb{M}^{N_f, N_n}$ (also called \emph{signatures}) and residual noise
+$\eta$. We interpret the $E_k$ as the physical meaningful hypothesis in the
+data.
 
-As superpostion is a non-bijective operation, the dissection of $\mathcal{L}$ back
-into separate so-called \emph{signatures }$E_k$ is ambigouous and thus
-impossible without further assumptions. Therefore we further assume that the
-$E_k$ are \emph{bimonotonic}, meaning that there exists an ordering of the
-$n_f^k$ indices $I_f$ and an ordering of the $n_s^k$ indices $I_s$ such that
-the reordered matrix $\tilde{E}_k = {E(I_f, I_s)}_k$ is montonic along all
-rows and columns. While this second assumptions restricts the applicability
-of the algorithm, it allows for an unambigous dissection of $\mathcal{L}$ into the
-$E_k$ components. Other than comparable methods such as PCA, it also allows
-for non-linear montonic correlations.
+As superposition is a non-bijective operation, the \emph{dissection} of
+$\mathcal{L}$ back into separate $E_k$ is ambiguous
+and thus impossible without further assumptions. Therefore we further assume
+that the $E_k$ are \emph{bimonotonic}, meaning that there exists an ordering of
+the $N_f$ indices $I_f$ and an ordering of the $N_m^k$ indices $I_s$ such that
+the reordered matrix $\tilde{E}_k = {E(I_f, I_s)}_k$ is monotonic along all rows
+and columns, that is, the correlations follow monotonic curves in both feature-
+and measurement space. While this second assumption restricts the applicability of the
+algorithm, it allows for an unambiguous dissection of $\mathcal{L}$ into the
+$E_k$ components. Different to PCA, it also allows for detecting non-linear
+monotonic correlations.
 
 SDCM dissections the data in four steps:
 \begin{enumerate}
-    \item First, initial representatives for an axis of correlation are
-        detected
+    \item First, SDCM detects initial representatives for an axis of correlation
+        in both feature and measurement space.
     \item The signature axes are calculated by maximising the correlation
-    \item A bimontonic regression find the (bimontonic), possibly
-        non-linear, \emph{eigensignal} of the signature
+    \item A non-parametric regression finds the (bimonotonic), possibly
+        non-linear, \emph{eigensignal} of the signature, meaning an estimated
+        for the curves of correlation in both feature- and measurement space.
     \item The data points belonging to that signature are subtracted from
         the data set.
 \end{enumerate}
-The algorithm terminates once no more represenatives of axes can be found.
+The algorithm terminates once no more representatives of axes can be found.
 SDCM treats its rows and columns as completely symmetrical. Each feature and
 sample can now be given a strength and weight value $s$. The strength value (in
-units of the signature) determines how far along the axis (in feature- or
-sample space) the point lies. The weight $w\in[-1,1]$ quantifies how
+units of the input data) determines how far along the eigensignal (in feature- or
+measurement space) the point lies. The weight $w\in[-1,1]$ quantifies how
 strongly the feature or sample participates in the signature.
 
 Typically, the number of signatures detected will be orders of magnitudes
@@ -148,37 +159,47 @@ dimensional reduction of the data.
 
 \subsubsection*{Dimensional reduction}
 We used SDCM and PCA to reduce the number of dimensions of the data, and to
-obtain signature strenghts and weights in the case of SDCM, and PC axes in
-feature space and PC coefficients in the case of PCA. For classification, this
-reduction was performed once on each \emph{preTraining} set. For interpretation,
-it was performed once on the data. 
+obtain signature strengths and weights in the case of SDCM, and principal
+component (PC) axes in feature space and PC coefficients in measurement space in
+the case of PCA. For classification, this reduction was performed once on each
+\emph{preTraining} set. For introspection, it was performed once on the data. 
 
-To keep the number of principal components to a comparable size with the
-signatures in SDCM, and to achieve an actual dimensional reduction, we chose the
-first $n$ principal components that account for $\SI{99}{\percent}$ of the
-variance \todo{change this if necessary}.
+For classification, to keep the number of PCs to a comparable
+size with the signatures in SDCM, and to achieve a reasonable dimensional
+reduction, we apply the following noise model: 
+\todo{Write this once understood.}
+%We first estimated the noise by calculating the median standard deviation
+%$\text{median}_{i=1\ldotsN_f}\qty(\sigma^i)$ for a all spectral bins in the
+%input data after median subtraction. Assuming the standard deviations of the
+%spectral bins are half-norm distributed, For interpretation, we used all
+%detected PCs.
 
-The distribution of number of signatures found by SDCM and principal components
-found by PCA is show in \todo{this
-probably has to be done }
+The distribution of number of signatures found by SDCM and PCs
+found by PCA is show in \autoref{fig:signatureDistribution}
+\begin{figure}[h]     
+    \centering
+    \includegraphics[width=\textwidth]{figures/signatureDistribution_10splits_99-99PCA.png}
+    \caption{Distribution of of number of SDCM signatures (left) and number of
+    PCs (right)}
+    \label{fig:signatureDistribution}
+\end{figure}
 
 Once a set of SDCM signatures has been found in the \emph{preTraining} set, obtaining
 strengths and weights relative to these signatures for new data, i.e.
 \emph{validation} set is a non-trivial task, as the signature axes can be
-non-orthogonal, and the method is dissective rather than just a projection. The
+non-orthogonal, and the method is dissecting rather than just a projection. The
 standard procedure is to repeat the dissection on the new data, while fixing the
-signature axes to the previously detected values. \todo{What exactly is the
-problem here? Signature axes should be fixed either way.}
+signature axes to the previously detected values. 
 
-To circumvent this issue, we performed a weighted projection the new data onto
+To circumvent this issue, we performed a weighted projection of the new data onto
 the known signature axes \todo{insert math}. This removes some of the
 precision obtained by SDCM, as spectral features explained by a single signature
 can still produce significant projection values in other signatures, if the axes
 aren't sufficiently orthogonal.
 However, it ensures that all signature strengths are obtained relative to the
 same axes. For consistency, the \emph{preTraining} set was also projected onto its
-own axes. \todo{difference signatures strength, projection values} 
+own axes. 
 
 For interpretation purposes this step isn't needed, as we only considered a
 single data set without validation splits. Here we used the output signature
-strengths and weights.
+weights.
