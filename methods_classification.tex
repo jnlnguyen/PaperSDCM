@@ -1,11 +1,9 @@
 \subsection*{Classification}
-\subsubsection*{Classification metrics}
-\todo{Schreiben!}
 \subsubsection*{Classification pipeline}
-A flowchart for the classification is shown in \autoref{sfig:classification}.
+A flowchart for the classification process is shown in \autoref{sfig:classification}.
 
 For classification a standard classifcation pipeline was set up using the python
-sklearn pipeline \todo{citation}. Five classifier models were used:
+\texttt{scikit-learn} pipeline \cite{scikit-learn}. Five classifier models were used:
 \begin{itemize}
     \item Naive Bayes (\texttt{sklearn.naive\_bayes.GaussianNB})
     \item SVC (\texttt{sklearn.svm.SVC}) 
@@ -20,19 +18,33 @@ parameters is displayed in \todo{reference to table}. The optimally performing
 set of parameters (measured by accuracy) are used for further classification.
  
 Next, for cross-validation, preTraining is split $144$ times
-into \emph{training}(\SI{80}{\percent}) and \emph{testing}(\SI{20}{\percent}).
+into \emph{training} (\SI{80}{\percent}) and \emph{testing} (\SI{20}{\percent}).
 Over each split, the classifier is trained with the optimized parameters on
 \emph{training}, and the classification metrics are evaluated on
-\emph{training},\emph{testing} and \emph{validation}.
+\emph{training}, \emph{testing} and \emph{validation}.
 
-The final results were averaged by mean over all $10\times 144$\todo{Change
-number if larger splits are available}
-calculations. The errors were the standard deviation over all $10\times
-144$\todo{wert einfügen} calculations.
-
+The final results were averaged by mean over all $25\times 144$ calculations.
+The errors were calculated as the standard deviation over all calculations.
 For each classification, a confusion matrix normalized along the rows was
 generated based on the predictions of the classifier. All confusion matrices
-were averaged by mean, and the error calculated by the standard deviation.
+were averaged by mean.%, and the error calculated by the standard deviation.
+
+\subsubsection*{Classification metrics}
+Let $N$ be the number of predictions and $C$ the number of correct predictions.
+Furthemore, for a given label $l$, let $t_p$ the number of true positives for
+that label, and $f_p$ the number of false positives and $f_n$ the number of
+false negatives. For comparison, we used
+four different classification metrics provided by the skelarn library:
+\begin{itemize}
+    \item $\text{Accuracy} = \frac{C}{N}$ (\texttt{sklearn.metrics.accuracy\_score})
+    \item $\text{Precision} = \frac{t_p}{t_p + f_p}$ (\texttt{sklearn.metrics.precision\_score})
+    \item $\text{Recall} = \frac{t_p}{t_p + f_n}$ (\texttt{sklearn.metrics.recall\_score})
+    \item $\text{f1} = 2 \cdot \frac{\text{precision} \cdot \text{recall}}{\text{precision}
+        + \text{recall}}$ (\texttt{sklearn.metrics.f1\_score})
+\end{itemize}
+All used metrics score in $\qty[0,1]$ where $1$ is the best result. For
+precision, recall and f1 the scores were averaged over all labels for each
+prediction.
 
 \begin{figure}
     \centering
