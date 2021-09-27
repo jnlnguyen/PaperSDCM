@@ -1,0 +1,90 @@
+\subsection*{ML Model generation}
+\subsubsection*{Data format}
+The measurement data exists as a set of files containing absolute intensity
+values in the range of \SI{294}{\nano\meter} to \SI{1002}{\nano\meter}. Each
+file has associated a meta-file containing information about the measured
+sample, and a background file, containing the background measurement for that
+particular batch. The relevant entries in the meta file are
+\begin{description}
+	\item[Type:] Name of measured sample material. Here all PE classes (HDPE,
+	LDPE) are grouped as PE.
+	\item[Origin:] Either name of manufacturer or location of discovery or
+	purchase. Here, all retail plastics are labeled \emph{supermarket}, that
+	is we did not distinguish between different retailers.
+	\item[Color:] Natural color of the sample
+	\item[isPlastic:] Boolean value determining whether sample was plastic or
+	%natural
+	\item[SampleID:] Unique ID identifying the material sample for each measurement
+	\item[BackgroundID:] Unique ID identifying the measurement session 
+\end{description}
+
+In the following, $i$ enumerates the set of $N_m$ measurements $m^i \in \mSet$, and $j$
+enumerates the set of $N_f$ features (spectral bins) $f_j \in \fSet$.
+\subsubsection*{Data Preprocessing}
+\label{ssub:preprocForClassification}
+A flowchart for the data processing pipeline before classification is shown in
+\autoref{sfig:dataprep}.
+
+First, the data (including the background measurement) was interpolated onto a
+common spectral axis. Here the number of spectral bins was kept equal to the
+mean of number of bins in the overall set. From each measurement the associated background
+measurement was subtracted. The data was concatenated into a single \todo{insert
+	n x m}matrix. The peak of spectrometer laser is located at
+\SI{405}{\nano\meter}. As we don't expect any measurable
+excitations below the laser peak, the offset from the zero-line $O^i$ of each
+measurement is estimated by taking the median of the data in the spectral range
+\SI{294}{\nano\meter} to \SI{400}{\nano\meter}. Similarly, we estimate the noise
+level $\eta^i$ of each measurement by calculating the standard deviation in that range.
+As we regard any offset of the spectra as systemic, we subtract it from the
+data.
+
+To detect the measurements with experimental overexposure, we determined for
+each sample the maximum $M^i$ of its smoothed spectrum
+where the spectrum was smoothed with a running median of window size
+\SI{20}{\nano\meter}. The exposure level was calculated as
+$E^i = \frac{O^i}{M^i}$.
+Measurements with $E^i < 0.5$ were removed from the data.
+\todo{how many were removed?}
+
+The power of the spectrum was calculated as $P^i = \sqrt{\frac{1}{N_f}
+	\sum_{j=1\ldots N_f} \qty(\tilde{s}^i_j)^2}$, where $\tilde{s}^i_j$ is the $i$th spectral bin of the running-median smoothed measurement $m^j$. The
+signal-to-noise-ratio was calculated as $SNR^i = \frac{P^i}{\eta^i}$.
+Measurements with $SNR^i < 2$ were removed from the data. \todo{How many meas.
+	were dropped?}
+
+Only measurements for which \emph{SampleID} is known were kept in the data.
+
+For classification, we used the whole spectrum in the range
+\SIrange{410}{1002}{\nano\meter} (\emph{long}). For inspection purposes, we
+additionally considered the range \SIrange{410}{680}{\nano\meter}
+(\emph{short}).
+
+Each measurement was divided by its norm $n^i$ which was calculated via the
+Matlab \texttt{trapz} integration function with the spectral range as $x$
+dimension.  This step is especially important for SDCM, as otherwise the
+regression steps (see \autoref{sssub:methodsSDCM}) might not converge, or
+converge very slowly.
+
+In the next step, we performed $25$ \todo{check this number before submitting}
+splits of the data into a \emph{preTraining} (\SI{80}{\percent}) and
+\emph{validation} (\SI{20}{\percent}) set. The material type and sample-ID
+information were used as stratification variables.
+
+Lastly we calculated the median of each spectral bin in the preTraining set and
+subtracted it from each measurement in both the preTraining and validation set.
+This centers the data at the zero level of each spectral bin. Note that this
+might introduce artifacts in data sets that have a different median (e.g. due to
+being sampled differently), and thus decrease prediction accuracy in
+\emph{external} validation sets.
+
+We additionally performed classifications of spectra and PCA without median
+subtraction. As this did not significantly influence the results for PCA, only
+the spectra variant is kept in the presented results.
+\subsubsection*{Data transformation methods}
+\subsubsection*{Classification methods}
+We compared the classification results of three different inputs: Using
+the processed spectra (\textbf{spectra}), after application of principle component analysis
+(\textbf{PCA}) and after application of signal dissection by correlation
+maximisation (\textbf{SDCM}). For the interpretation of signatures and principal
+components, we used spectra after PCA and SDCM transformation.
+\subsection*{Data Interpretation}

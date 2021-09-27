@@ -5,7 +5,7 @@ Without an effective waste management plan this amount will continue to grow eve
 Plastic litter can persist for decades as most types are resistant to natural degradation processes\cite{Chamas2020}.
 Environmental influences, however, can cause it to disintegrate into micron-sized particles commonly known as microplastics\cite{Thompson2004, Julienne2019, Zhang2021, Song2017, Duis2016}.
 Almost invisible to the eye, they are impossible to avoid: we find them in nearly every corner of our planet\cite{Duis2016,Chiba2018,Napper2020,Eerkes-Medrano2015,Andrady2011,Allen2019a}, in animals \cite{Barboza2020,Haave2021, Jamieson2019} and even in our food\cite{Koelmans2019,Zhang2020a}.
-Since 2021, we also have the first evidence of microplastics in our organs, when Ragusa et al. detected them in the human placenta\cite{Ragusa2021}.
+Since 2021, we also have the first evidence of microplastics in our organs, when Ragusa et al. detected them in the placenta\cite{Ragusa2021}.
 
 Plastic litter is highly diverse due to environmental influences and the sheer endless possibilities to produce plastic with desired material properties.
 Therefore, to evaluate their detrimental effects on animals and humans, we need a deeper insight on the sample's origins\cite{Prata2020, Campanale2020, Lim2021}.
@@ -16,7 +16,7 @@ Both techniques, however, come with physical limitations\cite{Araujo2018a, Loder
 Most recently, Ornik et al. \cite{Ornik2020} used photoluminescence (PL) spectroscopy for plastic identification.
 By comparing spectral intensity ratios between different samples, they sucessfully distinguished plastics from non-plastic samples from the riverine and marine environment.
 Such an identification method, however, may not be reproducible since measurements depend on different experimental factors such as hardware and sample alignments or even scientific experiences.
-These influences are impractical to capture and quantify as they may only apply to the examined setup.
+To capture and quantify all influences is impractical as they may only apply to the examined setup.
 %Nevertheless, it raises the question if there are subsets in the spectra that can be used for the identification while being robust against such experimental variations.
 One possible alternative is to measure a part of these variations and integrate them in a spectral library.
 Once implemented, algorithms and mathematical models can help unraveling the plastic sample's origin.
@@ -27,12 +27,12 @@ The model's performance partially depends on the number of input variables in a 
 In our case this is the measured intensity for each channel of our spectrometer.
 To improve the performance, it is common practice to reduce the number of variables while retaining the essential data information \cite{Aggarwal2001,Fodor2002}.
 An analysis of the stripped-down dataset can reveal signatures for groups of samples with common properties, such as, plastic type or color. 
-The efficiency to identify and capture these signatures depends on the selected transformation algorithm.
+The efficiency to identify and capture these signatures depends on the selected data transformation algorithm.
 Here, a recently published technique termed as signal dissection by correlation maximization (SDCM) stands out which successfully discovered new hidden signatures in a gene expression dataset \cite{Grau2019}.
 This is particularly attractive for PL-based plastic litter detection as it can identify unique subspectra that only occur in specific samples or sample types.
 
-In this report, we demonstrate two key points:
+In the present study report, we demonstrate two points:
 first, ML is the method of choice for PL-based sample identification; and second, SDCM has a superior ability to identify unique sample type signatures.
-The latter is advanteagous as it improves our ability to track the sample origin down to a single source.
-To demonstrate this, we generate ML models with one of five different classification methods and one of four transformation algorithms.
-By comparing model's performance metrics, e.g. the probability that a model-based prediction is correct, and the extracted signatures we find that SDCM-based ML models outperform their counterparts.
+The latter is advanteagous as it improves our ability to track down the sample origin to a single source.
+For this purpose, we generate ML models with different classification methods and data transformation algorithms.
+By evaluating model's performance metrics, e.g. the probability that a model-based prediction is correct, and the extracted signatures we find evidence that SDCM-based ML models outperform their counterparts.
