@@ -1,10 +1,10 @@
 \subsection*{ML Model generation}
+In the following, we describe all required steps to generate our plastic prediction models. 
 \subsubsection*{Data format}
-The measurement data exists as a set of files containing absolute intensity
-values in the range of \SI{294}{\nano\meter} to \SI{1002}{\nano\meter}. Each
-file has associated a meta-file containing information about the measured
-sample, and a background file, containing the background measurement for that
-particular batch. The relevant entries in the meta file are
+We save the information of a single spectrum in two different files:
+one file contains the absolute intensity as a function of wavelength;
+and the other file contains information about the measured sample.
+A single
 \begin{description}
 	\item[Type:] Name of measured sample material. Here all PE classes (HDPE,
 	LDPE) are grouped as PE.
@@ -81,10 +81,372 @@ We additionally performed classifications of spectra and PCA without median
 subtraction. As this did not significantly influence the results for PCA, only
 the spectra variant is kept in the presented results.
 \subsubsection*{Data transformation methods}
+We used SDCM and PCA to reduce the number of dimensions of the data, and to
+obtain signature strengths and weights in the case of SDCM, and principal
+component (PC) axes in feature space and PC coefficients in measurement space in
+the case of PCA. For classification, this reduction was performed once on each
+\emph{preTraining} set. For introspection, it was performed once on the data. 
+
+For classification, to keep the number of PCs to a comparable
+size with the signatures in SDCM, and to achieve a reasonable dimensional
+reduction, we apply the following noise model: 
+\todo{Write this once understood.}
+%We first estimated the noise by calculating the median standard deviation
+%$\text{median}_{i=1\ldotsN_f}\qty(\sigma^i)$ for a all spectral bins in the
+%input data after median subtraction. Assuming the standard deviations of the
+%spectral bins are half-norm distributed, For interpretation, we used all
+%detected PCs.
+
+The distribution of number of signatures found by SDCM and PCs
+found by PCA is show in \autoref{fig:signatureDistribution}
+\begin{figure}[h]     
+	\centering
+	\includegraphics[width=\textwidth]{figures/signatureDistribution_10splits_99-99PCA.png}
+	\caption{Distribution of of number of SDCM signatures (left) and number of
+		PCs (right)}
+	\label{fig:signatureDistribution}
+\end{figure}
+
+Once a set of SDCM signatures has been found in the \emph{preTraining} set, obtaining
+strengths and weights relative to these signatures for new data, i.e.
+\emph{validation} set is a non-trivial task, as the signature axes can be
+non-orthogonal, and the method is dissecting rather than just a projection. The
+standard procedure is to repeat the dissection on the new data, while fixing the
+signature axes to the previously detected values. 
+
+To circumvent this issue, we performed a weighted projection of the new data onto
+the known signature axes \todo{insert math}. This removes some of the
+precision obtained by SDCM, as spectral features explained by a single signature
+can still produce significant projection values in other signatures, if the axes
+aren't sufficiently orthogonal.
+However, it ensures that all signature strengths are obtained relative to the
+same axes. For consistency, the \emph{preTraining} set was also projected onto its
+own axes. 
+
+For interpretation purposes this step isn't needed, as we only considered a
+single data set without validation splits. Here we used the output signature
+weights.
 \subsubsection*{Classification methods}
 We compared the classification results of three different inputs: Using
 the processed spectra (\textbf{spectra}), after application of principle component analysis
 (\textbf{PCA}) and after application of signal dissection by correlation
 maximisation (\textbf{SDCM}). For the interpretation of signatures and principal
 components, we used spectra after PCA and SDCM transformation.
+
+\subsubsection*{Classification pipeline}
+A flowchart for the classification process is shown in \autoref{sfig:classification}.
+
+For classification a standard classifcation pipeline was set up using the python
+\texttt{scikit-learn} pipeline \cite{scikit-learn}. Five classifier models were used:
+\begin{itemize}
+	\item Naive Bayes (\texttt{sklearn.naive\_bayes.GaussianNB})
+	\item SVC (\texttt{sklearn.svm.SVC}) 
+	\item NuSVC (\texttt{sklearn.svm.NuSVC}) 
+	\item Logistic Regression (\texttt{sklearn.linear\_model.LogisticRegression}) 
+	\item Random Forest (\texttt{sklearn.ensemble.RandomForestClassifier}) 
+\end{itemize}
+
+For each preTraining/validation split, each classifier was evaluated by $25$-fold
+cross validation over a range of parameters. The selection of
+parameters is displayed in \todo{reference to table}. The optimally performing
+set of parameters (measured by accuracy) are used for further classification.
+
+Next, for cross-validation, preTraining is split $144$ times
+into \emph{training} (\SI{80}{\percent}) and \emph{testing} (\SI{20}{\percent}).
+Over each split, the classifier is trained with the optimized parameters on
+\emph{training}, and the classification metrics are evaluated on
+\emph{training}, \emph{testing} and \emph{validation}.
+
+The final results were averaged by mean over all $25\times 144$ calculations.
+The errors were calculated as the standard deviation over all calculations.
+For each classification, a confusion matrix normalized along the rows was
+generated based on the predictions of the classifier. All confusion matrices
+were averaged by mean.%, and the error calculated by the standard deviation.
+
+\subsubsection*{Classification metrics}
+Let $N$ be the number of predictions and $C$ the number of correct predictions.
+Furthemore, for a given label $l$, let $t_p$ the number of true positives for
+that label, and $f_p$ the number of false positives and $f_n$ the number of
+false negatives. For comparison, we used
+four different classification metrics provided by the skelarn library:
+\begin{itemize}
+	\item $\text{Accuracy} = \frac{C}{N}$ (\texttt{sklearn.metrics.accuracy\_score})
+	\item $\text{Precision} = \frac{t_p}{t_p + f_p}$ (\texttt{sklearn.metrics.precision\_score})
+	\item $\text{Recall} = \frac{t_p}{t_p + f_n}$ (\texttt{sklearn.metrics.recall\_score})
+	\item $\text{f1} = 2 \cdot \frac{\text{precision} \cdot \text{recall}}{\text{precision}
+		+ \text{recall}}$ (\texttt{sklearn.metrics.f1\_score})
+\end{itemize}
+All used metrics score in $\qty[0,1]$ where $1$ is the best result. For
+precision, recall and f1 the scores were averaged over all labels for each
+prediction.
+
+\begin{figure}
+	\centering
+	\begin{subfigure}[b]{0.49\textwidth}
+		\centering
+		\begin{tikzpicture}[thick,scale=0.48, every
+			node/.style={scale=0.47}, node distance=15mm]
+			%\note (start) [startstop] {Raw Data} 
+			\node (rawdata) [io] {Spectral measurements};
+			\node (split) [process, below of=rawdata]
+			{Split};
+			
+			\node (train) [io, below of=split, xshift=-35mm]
+			{Pre-Training};
+			\node (fDesignPreTrain) [process, below of=train]
+			{Feature Design};
+			\node (batchProcessingPreTraining) [process, below
+			of=fDesignPreTrain]{Median Subtraction};
+			\node (dimensionalReduction) [process, below
+			of=batchProcessingPreTraining]
+			{SDCM/PCA/Passthrough};
+			\node (projectionPreTraining) [process, below
+			of=dimensionalReduction]
+			{Projection/Passthrough};
+			
+			\node (validation) [io, below of=split, xshift=35mm]
+			{Validation};
+			\node (fDesignValidation) [process, below of=validation]
+			{Feature Design};
+			\node (batchProcessingValidation) [process, below of=fDesignValidation]
+			{Median Subtraction};
+			\node (projectionValidation) [process, below
+			of=batchProcessingValidation]
+			{Projection/Passthrough};
+			
+			\node (Input) [io, below
+			of=rawdata, yshift=-90mm]
+			{Input};
+			
+			\draw [arrow] (rawdata) -- (split);
+			\draw [arrow] (split) -- (train);
+			\draw [arrow] (train) -- (fDesignPreTrain);
+			\draw [arrow] (fDesignPreTrain) -- (batchProcessingPreTraining);
+			\draw [arrow] (batchProcessingPreTraining) --
+			(dimensionalReduction);
+			\draw [arrow] (dimensionalReduction) -- (projectionPreTraining);
+			\draw [arrow] (projectionPreTraining) -- (Input);
+			\draw [arrow] (split) -- (validation);
+			\draw [arrow] (validation) -- (fDesignValidation);
+			\draw [arrow] (fDesignValidation) -- (batchProcessingValidation);
+			\draw [arrow] (batchProcessingValidation) --
+			(projectionValidation);
+			\draw [arrow] (projectionValidation) -- (Input);
+			\draw [dashed, ->] (batchProcessingPreTraining) -- (batchProcessingValidation);
+			\draw [dashed, ->] (dimensionalReduction) -- (projectionValidation);
+			\draw [dashed, ->] (dimensionalReduction.west) to [out=180, in=180] (projectionPreTraining.west);
+		\end{tikzpicture}
+		\caption{Data preparation}
+		\label{sfig:dataprep}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.49\textwidth}
+		\centering
+		\begin{tikzpicture}[thick,scale=0.48, every
+			node/.style={scale=0.47}, node distance=15mm]
+			%\note (start) [startstop] {Raw Data} 
+			\node (input) [io] {input};
+			\node (pretraining) [io, below of=input, xshift=50mm, yshift = -15mm]{Pre-Training};
+			\node (grid) [process, below of=pretraining, xshift=40mm] {Grid Search};
+			\node (gridtraining) [io, below of=grid, xshift=-20mm]{Training};
+			\node (gridtesting) [io, below of=grid, xshift=20mm]{Testing};
+			\node (optimalParam) [io, below of=grid, yshift=-15mm] {Optimal Parameters};
+			\node (crossVal) [process, below of=pretraining, xshift=-40mm] {Cross
+				Validation Split};
+			\node (cvtraining) [io, below of=crossVal, xshift=20mm,
+			yshift=-15mm]{Training};
+			\node (cvtesting) [io, below of=crossVal, xshift=-20mm,
+			yshift=-15mm]{Testing};
+			\node (classifierTraining) [process, below of=cvtraining,
+			yshift=-15mm] {Classifier Training};
+			\node (prediction) [process, below of=cvtesting,
+			yshift=-15mm] {Prediction and Scoring};
+			\node (validation) [io, below of=input, xshift=-50mm, yshift =
+			-60mm]{Validation};
+			
+			\draw [arrow] (input) -- (pretraining);
+			\draw [arrow] (pretraining) -- (crossVal);
+			\draw [arrow] (crossVal) -- (cvtraining);
+			\draw [arrow] (cvtraining) -- (classifierTraining);
+			\draw [dashed, ->] (classifierTraining) -- (prediction);
+			\draw [arrow] (cvtraining) -- (prediction);
+			\draw [arrow] (cvtesting) -- (prediction);
+			\draw [arrow] (crossVal) -- (cvtesting);
+			\draw [arrow] (pretraining) -- (grid);
+			\draw [arrow] (grid) -- (gridtraining);
+			\draw [arrow] (grid) -- (gridtesting);
+			\draw [arrow] (gridtraining) -- (grid);
+			\draw [arrow] (gridtesting) -- (grid);
+			\draw [arrow] (grid) -- (optimalParam);
+			\draw [dashed, ->] (optimalParam) -- (classifierTraining);
+			\draw [arrow] (input) -- (validation);
+			\draw [arrow] (validation) -- (prediction);
+		\end{tikzpicture}
+		\caption{Classification}
+		\label{sfig:classification}
+	\end{subfigure}
+	\label{fig:flowcharts}
+	\caption{Flowcharts for the data preprocessing and classification pipeline.
+		Solid arrows denote flow of data, dashed arrows the influence by paramaters.
+		The nodes for the data labels, which are split accordingly, has been
+		omitted for clarity.}
+\end{figure}
+
+
+
 \subsection*{Data Interpretation}
+The data preprocessing for the interpretation of signatures followed essentially
+the same steps as in the previous subsection. As we want to be
+able to interpret the discovered (signatures), we imposed the additional
+restriction that for each measurement, the meta data for type, origin, color,
+isPlastic and sampleID must be provided, which reduced the number of
+measurements to $1243$. Furthermore, we did not split off any
+validation sets.
+\subsubsection*{SDCM}
+\label{ssub:methodsSDCM}
+SDCM (Signal Dissection by Correlation
+Maximisation)\cite{Grau2019} is a non-supervised algorithm for
+the detection of superposed correlations in high-dimensional datasets.
+Conceptionally it can be thought of as an extension of PCA for non-orthogonal
+axes of correlation, where instead projecting out detected dimensions, the
+detected axes of correlation are iteratively subtracted from the data. Initially
+developed for the application in bioinformatics for the clustering of gene
+expression data, it can be generically applied to any high-dimensional data
+containing (overlapping) subspaces of correlated measurements.
+
+We denote $\mathbb{M}^{N_f,N_m}$ as the set of real valued $N_f \times N_m$ matrices,
+where $N_f$ is the number of features in the data and $N_m$ the number of
+measurements. We speak of \emph{feature space} if we consider the $N_f$ row vectors of
+features in $M \in \mathbb{M}^{N_f,N_m}$, and of \emph{measurement space} if
+we consider the $N_m$ column vectors of measurements in $M \in \mathbb{M}^{N_f,
+	N_m}$.
+
+SDCM assumes the data $\mathcal{L} \in \mathbb{M}^{N_f, N_m}$, exists as a
+superposition $\mathcal{L} = \sum_{k=1}^n E_k + \eta$ of submatrices $E_k \in
+\mathbb{M}^{N_f, N_n}$ (also called \emph{signatures}) and residual noise
+$\eta$. We interpret the $E_k$ as the physical meaningful hypothesis in the
+data.
+
+As superposition is a non-bijective operation, the \emph{dissection} of
+$\mathcal{L}$ back into separate $E_k$ is ambiguous
+and thus impossible without further assumptions. Therefore we further assume
+that the $E_k$ are \emph{bimonotonic}, meaning that there exists an ordering of
+the $N_f$ indices $I_f$ and an ordering of the $N_m^k$ indices $I_s$ such that
+the reordered matrix $\tilde{E}_k = {E(I_f, I_s)}_k$ is monotonic along all rows
+and columns, that is, the correlations follow monotonic curves in both feature-
+and measurement space. While this second assumption restricts the applicability of the
+algorithm, it allows for an unambiguous dissection of $\mathcal{L}$ into the
+$E_k$ components. Different to PCA, it also allows for detecting non-linear
+monotonic correlations.
+
+SDCM dissections the data in four steps:
+\begin{enumerate}
+	\item First, SDCM detects initial representatives for an axis of correlation
+	in both feature and measurement space.
+	\item The signature axes are calculated by maximising the correlation
+	\item A non-parametric regression finds the (bimonotonic), possibly
+	non-linear, \emph{eigensignal} of the signature, meaning an estimated
+	for the curves of correlation in both feature- and measurement space.
+	\item The data points belonging to that signature are subtracted from
+	the data set.
+\end{enumerate}
+The algorithm terminates once no more representatives of axes can be found.
+SDCM treats its rows and columns as completely symmetrical. Each feature and
+sample can now be given a strength and weight value $s$. The strength value (in
+units of the input data) determines how far along the eigensignal (in feature- or
+measurement space) the point lies. The weight $w\in[-1,1]$ quantifies how
+strongly the feature or sample participates in the signature.
+
+Typically, the number of signatures detected will be orders of magnitudes
+smaller than the number of input features, thus allowing for an effective
+dimensional reduction of the data.
+
+\subsubsection*{Physical interpretation of signatures}
+To generate physically interpretable signatures from the dataset, we restricted
+the measurements to those for which the properties type, origin, color,
+isPlastic, sampleID and backgroundID are fully known. 
+
+\todo{size of input data}
+
+In the following we define \emph{subsignatures} $k^*$ of a signature $k$ as
+those measurements which are consistently expessed stronger than the median
+along the signature axes in spectral space ($k^+$), consistently expressed
+weaker than the median ($k^-$), or all measurements ($k^0$).
+
+SDCM readily provides weights $w$ which quantify how much a measurement
+participates in a $k$. As the implementations of PCA in
+\texttt{matlab} and \texttt{sklearn}  do no provide a comparable
+metric, we need to define the PCA axis weight. 
+Let $\cpca{k}{j}$ be the coefficient of the $k$th principal component of the
+$j$th measruement. We then define 
+
+\begin{align*}
+	%\wpcas{k}{j}
+	%    &= 
+	%    \sign\qty(\cpca{k}{j})
+	%    \min
+	%    \pqty{
+	%            1,  
+	%            \frac{
+	%                \abs{\cpca{k}{j}}
+	%            }
+	%            {
+	%                0.5 \cdot \max_{j\in\mSet}\abs{\cpca{k}{j}}
+	%            }
+	%        }_j \\
+	\wpcah{k}{j}
+	&= 
+	\begin{cases}
+		\sign\qty(\cpca{k}{j}) & \text{if }
+		\frac{\abs{\cpca{k}{j}}}{\max_{j\in\mSet} \abs{\cpca{k}{j}}} > 0.05  \\  
+		0 &  \text{else.}
+	\end{cases}
+\end{align*}
+
+A measurement $j$ is considered to be part of a subsignature ${k^*}$, if
+$\abs{\weight{k^*}{j}} \ge 0.05$. Using the binary variables \enquote{is part
+	of subsignature $\ssig{k}$} and \enquote{is part of label $l$}, we constructed a
+contingency table for each subsignature-label combination, and calculate a $p$
+value using a Fisher-Exact test. We used the Benjamini-Hochberg correcture
+\cite{benjamini_controlling_1995} to calculate the false
+discover rate (FDR).
+
+For each subsignature ${k^*}$ and label $l$ we calculate the following
+metrics
+\begin{equation*}
+	\aws{l}{{k^*}} = \frac{1}{N_l}\sum_j \abs{w^{k^*}_j} \in [0,1], \qquad
+	\mems{l}{{k^*}} = \abs{2\cdot\aws{l}{{k^*}}-1} \in [0,1], \qquad
+	\avmems{{k^*}} = \frac{\sum_l N_l \mems{l}{{k^*}}}{\sum_l N_l} \in [0,1].
+\end{equation*}
+$\aws{l}{{k^*}}$ quantifies the mean weight of the label $l$ in the subsignature
+$\ssig{k}$. We are interested in subsignatures where $\aws{l}{\ssig{k}}\approx 1$
+(label entirely included in $\ssig{k}$) or $\aws{l}{\ssig{k}}\approx 0$ (label
+entirely excluded from $\ssig{k}$). This motivates the definition of
+$\mems{l}{\ssig{k}}$. Lastly we can calculate the average $\mems{l}{\ssig{k}}$
+of $\ssig{k}$, weighted by $N_l$. The more specific a subsignature is to a
+subset of labels of $\labelCol{\infoCat}$, the higher $\avmems{\ssig{k}}$ is. 
+
+For given thresholds $\tpval$, $\taw$ and $\tmem$, we say a subsignature is 
+\begin{itemize}
+	\item\textbf{significant} if it contains at least one label with
+	$\pval{\ssig{k}}{l}\le \tpval$
+	\item\textbf{mixing} if it is significant and contains at least one label
+	with $\aws{\ssig{k}}{l} \ge \taw$
+	\item\textbf{selecting} if it is mixing and $\avmems{\ssig{k}} \ge \tmem$
+\end{itemize}
+As in some specific signatures the significant weights are either strictly
+positive or negative, we applied to following correction to remove
+redundancies:
+\begin{itemize}
+	\item If either $k^+, k^0$ or $k^-, k^0$ are specific, only consider $k^+$
+	or $k^-$.
+\end{itemize}
+
+%When calculating the above metrics, the choice of $\infoCat$ is
+%important\todo{rephrase}. E.g. a signature that contains a particular
+%combination of material types and colors, might not significantly contain either
+%just the types or just the colors. Vice versa, a choice of
+%$\infoCat$ that is specific to one label will likely be mutliple coding
+%for a finer choice of $\infoCat$. The fewer categories are present in the test,
+%the stronger and more general the signature is. 
+
