@@ -1,149 +1,336 @@
 \subsection*{Interpretability of signatures and principal components}
-\subsubsection*{Matching signatures to labels}
-\todo{redo images with new selection rule}
 Unsupervised dimensional reduction algorithms group high-dimensional data points
 into a smaller number of clusters based on the similarity of features. This motivates
 the idea of asigning a specific meaning or explanation to each cluster. 
 
-Each measurement has a label containing information of the measurument and
-material properties. $\infoCat$ is the set of categories from which we draw our
-labels. $\labelCol{\infoCat}$ is the set of labels induced by the choice of
-category.  Let $L \in \LC$ be a set of labels. 
-
 We applied both SDCM and PCA to a subset of our data for which we had full
 information of the categories \enquote{material type},\enquote{material
-color},\enquote{material origin} and enquote{sample ID}. \enquote{sample ID} is
-a unique identifier for the sample the measurement was take from. The data
-contained $1243$ measurements in the range of
-\SIrange{410}{1002}{\nano\meter}, split into $3057$ spectral bins.
-SDCM detected $143$ signatures. As we did not cut off the selection of principal
-components by variance, PCA terminated with $1243$ components.
+color},\enquote{material origin}, \enquote{Session ID} and enquote{Sample ID}.
+\enquote{Session ID} identifies the session date and background spectrum,
+\enquote{Sample ID} the unique sample the measurement was taken from.  The data
+contained $1243$ measurements split into $3057$ spectral bins in the range of
+\SIrange{410}{1002}{\nano\meter}  (long spectrum), and
+\SIrange{410}{680}{\nano\meter} split into $1394$ spectral bins (short
+spectrum). SDCM detected $143$ signatures for the long spectrum, and $121$
+signatures for the short spectrum. As we did not cut off the selection of
+principal components by variance, PCA terminated with $1243$ components for both
+ranges.
 
-In the following we refer to both SDCM signatures and principal components as
-\emph{signatures}. We refer to a \emph{subsignature} as either the part of the
-signature below above $0$ (the median), above $0$, or the entire signature together.
-%A subsignature is \emph{mixing} for $L$ if it contains almost all measurements
-%of this set of labels. It is furthermore \emph{selecting} for $L$ if it contains
-%almost no measurements with any other labels $l' \not\in L$ (see the mothods for
-%a precise definition of these terms).
-A subsignature contains a measurement, if the measurement has weight $w>0.05$
-for that subsignature. A subsignature is \emph{selecting} for $L$ if it contains
-almost all measurements with labels $l \in L$, and almost no measurements with
-any other labels $l' \not\in L$ (see the mothods for a precise definition of
-these terms).
+SDCM and PCA provide signatures and principal components, meaning axes in high
+dimensional feature space along which the data is correlated.  In the following
+we refer to both SDCM signatures and principal components as \emph{signatures}.
+We refer to a \emph{subsignature} as either the part of the signature below $0$
+(the median), above $0$, or the entire signature together.  For both SDCM and
+PCA, we assorted each measurement point in feature space a weight $w \in
+\qty[0,1]$ quantifying its membership in the subsignature. We say a measurement
+takes part in (or is contained by) a subsignature $\ssig{k}$ if $w \ge 0.05$.
 
-\autoref{tab:selectingTotals} shows total numbers of selecting subsignatures for
-SDCM and two methods of calculating the PCA signature membership \todo{remove
-soft weights?}\todo{show mixing signatures?}. For all three choices of
-categories, SDCM detects the highest number of selecting subsignatures.
+Each measurement has a label containing information of the measurument
+properties and material properties. $\infoCat$ is the set of categories from
+which the labels are drawn. $\labelCol{\infoCat}$ is the set of labels induced by
+the choice of category. The number of labels induced by various choices of
+categories is shown in table \autoref{tab:nlabels}. 
 
-\autoref{fig:histsSpecSig} shows the distribution of selecting subsignatures over
-the amount of labels contained in each explanation. For the finest choice of categories
-\autoref{sfig:histSpecSig1}, PCA (hard) detects $33$ selecting signatures, each
-containing up to $26$ labels\todo{check these numbers}, but very few signatures
-selecting only one or two labels. SDCM conversely only detects signatures
-selecting only two or fewer labels. This demonstrates that SDCM can detect finer
-differences between datasets, singling out measurements that have been performed
-on the same material sample.\todo{Discussion -> problem large hetergoeneities?}.
-The labels selected by SDCM are displayed in \todo{table einfügen}. 
+Let $L \subset \LC$ be a set of labels. We are interested in subsignatures $\ssig{k}$
+that describe $L$, i.e. a subsignature $\ssig{k}$ s.t. labels $l\in L$ significantly
+take part in $\ssig{k}$, and labels $l \not\in L$ do not. For this we first
+calculated the $p$ value for the contingency table of the label membership and
+subsignature memebership via a Fisher-Exact test. Using the weights $w$, we
+calculated the average weight in the subsignature of every label
+$\aws{l}{\ssig{k}}$ and the membership score $\avmems{\ssig{k}}$ (see Methods for a
+precise definition). $\avmems{\ssig{k}} \in \qty[0,1]$ quantifies how strongly
+$\ssig{k}$ separates the labels $\LC$ into signature membership and
+non-memberhsip ($\avmems{\ssig{k}} = 1$ means that all labels are either
+completely contained or excldued by $\ssig{k}$). We say $\ssig{k}$ is
+\emph{selecting} for $L$ if all $l \in L$ have $p<\tpval$ and
+$\aws{l}{\ssig{k}} \ge \taw$, and $\avmems{\ssig{k}} > \tmem$. We say $\ssig{k}$
+is \emph{singular} if it is selecting and $\abs{L} = 1$. 
 
-Coarsening the categories
-(\autoref{sfig:histSpecSig2},\autoref{sfig:histSpecSig3})reduces the number of
-selecting subsignatures. This is expected, as mixing finer lables into a coarser
-set combines heterogeneities into a single label, which were previously represented
-on separate signatures. For the coarsest set of categories ("Type"), only SDCM is
-able to find selecting signatures.
-\begin{figure}[h]     
-    \begin{subfigure}[b]{0.3\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{figures/hist_typeOriginColorId1.png}
-        \caption{Type/Origin/Color/Sample ID}
-        \label{sfig:histSpecSig1}
-    \end{subfigure}
-    \begin{subfigure}[b]{0.3\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{figures/hist_typeOriginColor.png}
-        \caption{Type/Origin/Color}
-        \label{sfig:histSpecSig2}
-    \end{subfigure}
-    \begin{subfigure}[b]{0.3\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{figures/hist_type.png}
-        \caption{Type}
-        \label{sfig:histSpecSig3}
-    \end{subfigure}
-    \caption{Distribution of the number of selecting subsignatures for three
-    choices of categories.} 
-    \label{fig:histsSpecSig}
+In the following we choose $\tpval = 0.001$, $\taw = \tmem = 0.90$. \todo{maybe
+some discussion on the thresholds?}
+\begin{table}
+    \centering
+    \begin{tabular}{c | c | c}
+        Category & Number of labels  & Number of labels with $m^l > 1$\\
+        \hline
+        Sample ID& 80&8\\ 
+        Session ID& 88&0\\ 
+        Type& 18&10\\ 
+        Color& 13&11\\ 
+        Origin & 5&5\\
+        Type, Color, Origin & 57&19
+    \end{tabular}
+    \caption{Number of labels for several choices of categories}
+    \label{tab:nlabels}
+\end{table}
+\subsubsection*{SDCM and PCA performance}
+\autoref{fig:sdcmpcabeta} shows the distribution of $\avmems{\ssig{k}}$ for PCA
+and SDCM over all subsignatures in both choices of spectral range for the finest
+choice of categories (\emph{Session ID}). Whereas the
+distrubution sharply peaks close to $1$ for SDCM, implying a large number
+signatures that are selecting for some choice of $L$, the vast majority of PCA
+subsignatures has a failry low value of $\avmems{ssig{k}}$. This is not
+surprising, as we put not restrictions on the number of principal components,
+and let the algorithm terminate at the number of measurements. A second, smaller
+peak appears for PCA in the $0.9$ to $0.95$ range. Close to $1$, SDCM clearly
+detects more selecting subsignatures in both absolute numbers and relative to
+the overall number of subsignatures.
+
+\autoref{fig:sdcmpcalabeldistribution} shows the distribution of labels taking
+part in selecting subsignatures for SDCM and PCA. 
+
+Decreasing the spectral range, shows a reduction of highly selecting
+subsignatures in SDCM, and a general shift to lower $\avmems{\ssig{k}}$ in PCA.
+This indicates that the tail of the spectra, although not containing interesting
+features on visual inspection, can be relevant for detecting high dimensional
+features in the measurements. \todo{Expand on this: Pictures of
+spectra}\todo{Discuss spectra in methods?}\todo{are we sure there are no
+artefacts Discuss security with 680nm mode}.
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{figures/hist_beta_distribution}
+    \caption{Distribution of $\avmems{\ssig{k}}$ over all subsignatures for
+    SDCM (left) and PCA (middle), and both choices of spectral range for the
+    finest choice of categories (\emph{Session ID}).
+    (right) shows a detail comparison of PCA and SDCM for the long spectral
+    range.} 
+    \label{fig:sdcmpcabeta}
 \end{figure}
-%\begin{table}
-%    \centering
-%    %\begin{tabular}{c|c|c|c|c}
-%    %    Categories & Weight Name& Significant & Mixing & Selecting   \\ 
-%    %    \hline
-%    %    \hline
-%    %    Type/Origin/Color/Sample ID & SDCM Weights         &   28.904   &    27.972  &   8.8578\\  
-%    %                                & PCA Weights (soft)   &   29.869   &    2.0311  &  0.11947 \\ 
-%    %                                & PCA Weights (hard)   &   33.094   &    11.111  &  2.7479  \\
-%    %    \hline
-%    %    Type/Origin/Color& SDCM Weights         &   27.273   &    22.145  &  3.9627  \\
-%    %                     & PCA Weights (soft)   &   30.585   &    1.3142  &  0.11947 \\
-%    %                     & PCA Weights (hard)   &   33.214   &    7.6464  &  0.59737 \\
-%    %    \hline
-%    %    Type & SDCM Weights         &   21.678   &    13.986  &   0.6993 \\ 
-%    %         & PCA Weights (soft)   &   22.461   &         0  &        0 \\ 
-%    %         & PCA Weights (hard)   &   23.178   &    1.7921  &        0 \\
-%    %\end{tabular}
-%    \caption{Percentage of subsignatures that are Significant, Mixing or
-%    Selecting for three different choices of categories.}
-%    \label{tab:selectingPercentages}
-%\end{table}
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{figures/hist_labelDistribution}
+    \caption{Distribution of selecting signatures over the number of labels
+    described for SDCM and PCA for the finest choice of categories
+    (\emph{Session ID}).} 
+    \label{fig:sdcmpcalabeldistribution}
+\end{figure}
+
+
+\subsubsection*{Signature generality}
+We are interested in the ability of SDCM and PCA in containing describing broad
+material properties categories such as \emph{type}, \emph{origin} or
+\emph{color} with a single subsignature. We define the \emph{baseline
+categories} $\infoCatt$ as the categories
+\emph{type},\emph{origin},\emph{color}, \emph{Sample ID} and \emph{Session ID}.
+Given a singular subsignature for label $l$, we define the \emph{label
+multiplicity} $m^l$ as the number of unique labels in $\LCt$ that match $l$.
+This step is required, as some general labels might only be represented once in
+$\LCt$ (e.g. if a particular plastic type was only measured once on one sample).
+Singular signatures with $m^l > 1$ can be said to generically describe $l$
+\emph{within the data available}.\todo{maybe emphasise this point}
+
+\autoref{tab:ssigTablegenerall} shows the number of unique labels in selecting
+subsignatures, unique labels in singular subsignatures and unique labels in
+singular subsignatures with $m^l > 1$ for both spectral ranges, several choices
+of categories and PCA and SDCM. Although SDCM finds more overall lables from selecting and
+singular subsignatures, both SDCM and PCA perform poorly in finding general
+signatures for type, origin and color. Only for the cateogry \emph{type} SDCM
+performs better than PCA. Comparing with the overall number of labels with $m^l
+> 1$ in \autoref{tab:nlabels}, this indicates that neither method is well suited
+to find univariate interpretations of the data on a broad scale. 
+\begin{table}
+    \centering
+    \begin{tabular}{c | c || c | c | c | c}
+        Spectral Range & Categories & Algorithm & \shortstack{Unique labels in
+        \\ selecting Subsignatures} & \shortstack{Unique labels in \\ singular
+        Subsignatures} & \shortstack{Unique labels in \\ Singular Subsignatures
+        \\ with $m^l > 1$} \\
+        \hline
+        \SIrange{410}{1002}{\nano\meter} & Type, Origin, Color & PCA &15& 8& 1\\
+                                         & & SDCM                    &29&15& 1\\
+                                         & Type & PCA                & 0& 0& 0\\
+                                         & & SDCM                    & 8& 4& 2\\
+                                         & Origin & PCA              & 0& 0& 0\\
+                                         & & SDCM                    & 0& 0& 0\\
+                                         & Color & PCA               & 1& 1& 0\\
+                                         & & SDCM                    & 2& 2& 0\\
+        \SIrange{410}{680}{\nano\meter} & Type, Origin, Color & PCA  &14& 8& 1\\
+                                         & & SDCM                    &23&10& 1\\
+                                         & Type & PCA                & 0& 0& 0\\
+                                         & & SDCM                    & 9& 2& 1\\
+                                         & Origin & PCA              & 0& 0& 0\\
+                                         & & SDCM                    & 0& 0& 0\\
+                                         & Color & PCA               & 1& 1& 0\\
+                                         & & SDCM                    & 2& 2& 0
+    \end{tabular}
+    \caption{Overview of numbers of labels detected for
+    material property labels. }
+    \label{tab:ssigTablegenerall}
+\end{table}
+\subsubsection*{Signature specificity}
+The finest partition of the measurements is given by the categories \emph{Sample
+ID} and \emph{Session ID}. Here, SDCM and PCA find the comparable numbers of
+unique labels in selecting subsignatures. However, SDCM clearly outperforms PCA
+in finding singular subsignatures. We note that this contrast gets more extreme,
+the higher the thresholds $\taw$ and $\tmem$ are chosen \todo{compare figure? or
+another table}.  SDCM was also able to group together measurements of the sample
+ID for different measurement sessions.
+
+\autoref{tab:listUniqSampleID} shows the material info of those $33$ samples which
+can be uniquely identified by SDCM. Only one non-plastic can be identified at
+these threshold values, while the majority is made up of supermarket $PE$, $PET$
+and $PP$ samples.
+
+These results indicate that SDCM is capable of detecting high-dimensional
+similarities between spectra down to the level of discerning different samples
+in commercial plastics.  This is relevant for further applications in
+environmental science, such as identifying single sources of microplastic
+contamination from a broad range of measurements, and tracing contaminations
+back towards their sources either spatially or in time.
+
+Further work is required to test the extent and reliability of this method. So
+far, only $33$ of $80$ samples could be uniquely identified by SDCM. Only in $2$
+samples measurements from multiple sessions (and thus possible differing
+experimental conditions) were present. Extending the available data, and
+performing
+measurements of the same sample in multiple sessions under varying experimental
+conditions is necessary to strengthen this method. We also do not provide a
+method for determining when a subsignature describes a single sample for novel
+measurements with unknown labeling.\todo{difficulty of enumerating all possible
+combinations}
+
+\begin{table}
+    \centering
+    \begin{tabular}{c | c || c | c | c | c}
+        Spectral Range & Categories & Algorithm & \shortstack{Unique labels in
+        \\ selecting Subsignatures} & \shortstack{Unique labels in \\ singular
+        Subsignatures} & \shortstack{Unique labels in \\ Singular Subsignatures
+        \\ with $m^l > 1$} \\
+        \hline
+        \SIrange{410}{1002}{\nano\meter} & Sample ID & PCA             &79&15& 0\\
+                                         & & SDCM                      &72&33& 2\\
+                                         & Session ID & PCA            &87&16& 0\\
+                                         & & SDCM                      &81&36& 0\\
+                                        \hline
+        \SIrange{410}{680}{\nano\meter}  & Sample ID & PCA             &70&11& 0\\
+                                         & & SDCM                      &74&23& 1\\
+                                         & Session ID & PCA            &80&14& 0\\
+                                         & & SDCM                      &82&27& 0
+    \end{tabular}
+    \caption{Overview of numbers of labels detected for
+    specific sample and session labels. }
+    \label{tab:ssigTablespecific}
+\end{table}
 \begin{table}
     \centering
     \begin{tabular}{c|c|c}
-        Categories & Weight Name&  Selecting   \\ 
+        Type & Origin & Color \\
+        %Sample ID & Type & Origin & Color \\
         \hline
-        \hline
-        Type/Origin/Color/Sample ID & SDCM Weights            &   45  \\  
-                                    & PCA Weights (soft)      &    1  \\ 
-                                    & PCA Weights (hard)      &   33  \\
-        \hline                                                     
-        Type/Origin/Color           & SDCM Weights            &   19  \\
-                                    & PCA Weights (soft)      &    1  \\
-                                    & PCA Weights (hard)      &    9  \\
-        \hline                                                      
-        Type                        & SDCM Weights            &    3   \\ 
-                                    & PCA Weights (soft)      &    0   \\ 
-                                    & PCA Weights (hard)      &    0   \\
+        %NpNat0001M00    & N1  &    Elba       &    cream \\
+        %PlPcBpi0000M00  & PC  &    BPI        &    clear \\
+        %PlPcBre0000M00  & PC  &    Brett      &    clear \\
+        %PlHdpeRet0096M00& PE  &    supermarket&    blue  \\
+        %PlLdpeRet0023M00& PE  &    supermarket&    green \\
+        %PlHdpeRet0046M00& PE  &    supermarket&    grey  \\
+        %PlHdpeRet0125M00& PE  &    supermarket&    pink  \\
+        %PlHdpeRet0010M00& PE  &    supermarket&    white \\
+        %PlLdpeRet0169M00& PE  &    supermarket&    yellow\\
+        %PlPetRet0042M00 & PET &    supermarket&    black \\
+        %PlPetRet0071M00 & PET &    supermarket&    black \\
+        %PlPetRet0081M00 & PET &    supermarket&    blue  \\
+        %PlPetRet0113M00 & PET &    supermarket&    green \\
+        %PlPetRet0126M00 & PET &    supermarket&    pink  \\
+        %PlPetRet0153M00 & PET &    supermarket&    purple\\
+        %PlPetRet0084M00 & PET &    supermarket&    red   \\
+        %PlPetRet0035M00 & PET &    supermarket&    yellow\\
+        %PlPetRet0156M00 & PET &    supermarket&    yellow\\
+        %PlPmmaBre0000M00& PMMA&    Brett      &    clear \\
+        %PlPpRet0043M00  & PP  &    supermarket&    black \\
+        %PlPpRet0037M00  & PP  &    supermarket&    blue  \\
+        %PlPpRet0097M00  & PP  &    supermarket&    blue  \\
+        %PlPpRet0075M00  & PP  &    supermarket&    green \\
+        %PlPpRet0086M00  & PP  &    supermarket&    green \\
+        %PlPpRet0163M00  & PP  &    supermarket&    red   \\
+        %PlPpRet0164M00  & PP  &    supermarket&    red   \\
+        %PlPpRet0014M00  & PP  &    supermarket&    white \\
+        %PlPpRet0019M00  & PP  &    supermarket&    yellow\\
+        %PlPpRet124bM00  & PP  &    supermarket&    yellow\\
+        %PlPsBam0000M00  & PS  &    BAM        &    clear \\
+        %PlPsBpi0000M00  & PS  &    BPI        &    clear \\
+        %PlPsBre0000M00  & PS  &    Brett      &    clear \\
+        %PlPvcBam0000M00 & PVC &    BAM        &    white 
+
+        N1  &    Elba       &    cream \\
+        PC  &    BPI        &    clear \\
+        PC  &    Brett      &    clear \\
+        PE  &    supermarket&    blue  \\
+        PE  &    supermarket&    green \\
+        PE  &    supermarket&    grey  \\
+        PE  &    supermarket&    pink  \\
+        PE  &    supermarket&    white \\
+        PE  &    supermarket&    yellow\\
+        PET &    supermarket&    black \\
+        PET &    supermarket&    black \\
+        PET &    supermarket&    blue  \\
+        PET &    supermarket&    green \\
+        PET &    supermarket&    pink  \\
+        PET &    supermarket&    purple\\
+        PET &    supermarket&    red   \\
+        PET &    supermarket&    yellow\\
+        PET &    supermarket&    yellow\\
+        PMMA&    Brett      &    clear \\
+        PP  &    supermarket&    black \\
+        PP  &    supermarket&    blue  \\
+        PP  &    supermarket&    blue  \\
+        PP  &    supermarket&    green \\
+        PP  &    supermarket&    green \\
+        PP  &    supermarket&    red   \\
+        PP  &    supermarket&    red   \\
+        PP  &    supermarket&    white \\
+        PP  &    supermarket&    yellow\\
+        PP  &    supermarket&    yellow\\
+        PS  &    BAM        &    clear \\
+        PS  &    BPI        &    clear \\
+        PS  &    Brett      &    clear \\
+        PVC &    BAM        &    white 
     \end{tabular}
-    \caption{Total number of selecting subsignatures for three different choices of categories.}
-    \label{tab:selectingTotals}
+    \caption{Listing of the $33$ Sample IDs uniqueley selected by SDCM
+    subsignatures.}
+    \label{tab:listUniqSampleID}
 \end{table}
-% mixing
-%&   238
-%&    23
-%&   775
+
+%\autoref{tab:selectingTotals} shows total numbers of selecting subsignatures for
+%SDCM and two methods of calculating the PCA signature membership \todo{remove
+%soft weights?}\todo{show mixing signatures?}. For all three choices of
+%categories, SDCM detects the highest number of selecting subsignatures.
 %
-%&   188
-%&    17
-%&   607
-%       
-%&    83
-%&     0
-%&   137    %                      Significant    Mixing    Specific
-
-    %SDCM Weights              336         238         45   
-    %PCA Weights (soft)       1635          23          1   
-    %PCA Weights (hard)       1562         775         33   
-
-    %SDCM Weights              329         188         19   
-    %PCA Weights (soft)       1553          17          1   
-    %PCA Weights (hard)       1741         607          9
-    %
-    %SDCM Weights              253          83         3    
-    %PCA Weights (soft)        559           0         0    
-    %PCA Weights (hard)        757         137         0  
-\subsubsection*{Signature specificity}
-\subsubsection*{Signature generallity}
-\subsubsection*{Influence of spectral size}
-\subsubsection*{Interpreting signature axes}
+%\autoref{fig:histsSpecSig} shows the distribution of selecting subsignatures over
+%the amount of labels contained in each explanation. For the finest choice of categories
+%\autoref{sfig:histSpecSig1}, PCA (hard) detects $33$ selecting signatures, each
+%containing up to $26$ labels\todo{check these numbers}, but very few signatures
+%selecting only one or two labels. SDCM conversely only detects signatures
+%selecting only two or fewer labels. This demonstrates that SDCM can detect finer
+%differences between datasets, singling out measurements that have been performed
+%on the same material sample.\todo{Discussion -> problem large hetergoeneities?}.
+%The labels selected by SDCM are displayed in \todo{table einfügen}. 
+%
+%Coarsening the categories
+%(\autoref{sfig:histSpecSig2},\autoref{sfig:histSpecSig3})reduces the number of
+%selecting subsignatures. This is expected, as mixing finer lables into a coarser
+%set combines heterogeneities into a single label, which were previously represented
+%on separate signatures. For the coarsest set of categories ("Type"), only SDCM is
+%able to find selecting signatures.
+%\begin{figure}[h]     
+%    \begin{subfigure}[b]{0.3\textwidth}
+%        \centering
+%        \includegraphics[width=\textwidth]{figures/hist_typeOriginColorId1.png}
+%        \caption{Type/Origin/Color/Sample ID}
+%        \label{sfig:histSpecSig1}
+%    \end{subfigure}
+%    \begin{subfigure}[b]{0.3\textwidth}
+%        \centering
+%        \includegraphics[width=\textwidth]{figures/hist_typeOriginColor.png}
+%        \caption{Type/Origin/Color}
+%        \label{sfig:histSpecSig2}
+%    \end{subfigure}
+%    \begin{subfigure}[b]{0.3\textwidth}
+%        \centering
+%        \includegraphics[width=\textwidth]{figures/hist_type.png}
+%        \caption{Type}
+%        \label{sfig:histSpecSig3}
+%    \end{subfigure}
+%    \caption{Distribution of the number of selecting subsignatures for three
+%    choices of categories.} 
+%    \label{fig:histsSpecSig}
+%\end{figure}
