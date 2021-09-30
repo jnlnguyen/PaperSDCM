@@ -1,19 +1,19 @@
 \subsection*{ML Model generation}
-To generate our ML models for plastic sample prediction, we choose a combination of supervised and unsupervised learning methods.
-In the following, we describe all our steps to generate these models. 
+To generate our ML models for PL-based sample identifications, we choose a combination of supervised and unsupervised learning methods.
+The following sections describe all our steps to generate these models. 
 \subsubsection*{Data format}
 We save the information of a single spectrum in two different files:
 one contains the absolute intensity as a function of wavelength;
-and the other contains information about the sample.
-The latter acts as labels for the measurement, which later plays a central role for the evaluation of the classifier's performance.
+and the other contains details about the sample.
+The latter acts as labels for the measurement, which are central for the evaluation of the classifier's performance.
 For this study, we chose the following labels:
 \begin{description}
 	\item[\textbf{Type}:] Material type of the sample. Here, PE is used for all of its subtypes.
-	\item[\textbf{Origin}:] Name of the manufacturer or location. All retail samples are labeled as supermarket.
-	\item[\textbf{Color}:] Color of the sample.
-	\item[\textbf{isPlastic}:] Specifies if sample material is a plastic or not
+	\item[\textbf{Origin}:] Name of the manufacturer or location. All retail samples have the same label.
+	\item[\textbf{Color}:] Colour of the sample.
+	\item[\textbf{isPlastic}:] Specifies if the sample material is a plastic or not.
 	\item[\textbf{SampleID}:] Unique ID identifying the sample for each measurement.
-	\item[\textbf{BackgroundID}:] Unique ID identifying the measurement session.
+	\item[\textbf{SessionID}:] Unique ID identifying the measurement session.
 \end{description}
 In the following, $i$ enumerates the set of $N_m$ measurements $m^i \in \mSet$, and $j$ enumerates the set of $N_f$ features (spectral bins) $f_j \in \fSet$.
 \todo{ist das richtig? was umfassen die Mengen M und F} 
@@ -75,19 +75,19 @@ In the following, $i$ enumerates the set of $N_m$ measurements $m^i \in \mSet$, 
 	\caption{Data preparation}
 	\label{sfig:dataprep}
 \end{figure}
-To generate the ML models, we prepare our spectral data as illustrated in \autoref{sfig:dataprep}.
+We prepare our spectral data as illustrated in \autoref{sfig:dataprep}.
 First, the spectral data and the corresponding background measurement are interpolated onto a common spectral axis.
-Here, the number of spectral bins is kept equal to the mean of number of bins in the overall set.
+The number of spectral bins is kept equal to the mean of number of bins in the overall set.
 We then subtract the background measurement from the sample spectrum.
-Once all spectra has been processed in that manner, we concatenate the data into a single matrix.
+Once all spectra are processed in that manner, we concatenate the data into a single matrix.
 
-Since we do not expect any signal below the laser peak, we estimate the offset from the baseline $O^i$ for each measurement by taking the median in the range \SI{294}{nm} \textendash \SI{400}{nm}.
-Similarly, we estimate the noise level $\eta^i$ for each measurement by calculating the standard deviation in that range.
+Since we do not expect any signal below the laser peak, we estimate the offset from the baseline $O^i$ for for the $i$-th measurement by taking the median in the range \SIrange{294}{400}{\nano\meter}.
+Similarly, we estimate the noise level $\eta^i$ by calculating the standard deviation in the same range.
 As we regard any offset of the spectra as systemic, we subtract it from the data.
 
 For the ML model generation, we only consider spectra that are not overexposed and noisy.
 To ensure this, we integrated a process that automatically filters out all data which do not satisfy our conditions.
-We single out measurements with experimental overexposure by determining for each spectrum the maximum $M^i$ of its smoothed spectrum.
+We single out measurements with experimental overexposure by determining for each spectrum the maximum $M^i$ of the smoothed spectrum $m^j$.
 For the smoothing, we use a running median with a window size of \SI{20}{nm}.
 The exposure level is then calculated as $E^i = \frac{O^i}{M^i}$.
 We then classify measurements with $E^i < 0.5$ as overexposed.
@@ -97,17 +97,17 @@ To detect noisy spectra, we calculate the signal-to-noise-ratio, $SNR^i$, with t
 \end{equation*}
 where $P^i$ is the power of the spectrum given as:
 \begin{equation*}
-	P^i = \sqrt{\frac{1}{N_f}\sum_{j=1\ldots N_f} \qty(\tilde{s}^i_j)^2}
+	P^i = \sqrt{\frac{1}{N_f}\sum_{j=1\ldots N_f} \qty({s}^i_j)^2}\textrm{,}
 \end{equation*}
-and $\tilde{s}^i_j$ is the $i$-th spectral bin of the running-median smoothed measurement $m^j$.
+and ${s}^i_j$ is the $i$-th spectral bin of $m^j$.
 Here, measurements that do not satisfy the condition $SNR^i < 2$ are classified as noisy.
 
-For classification, we used the whole spectrum in the range \SIrange{410}{1002}{\nano\meter} (\emph{long}).
-Additionally, we additionally considered the range \SIrange{410}{680}{\nano\meter} (\emph{short}) for inspection purposes.
-Each measurement was divided by its norm $n^i$, which is particularly important for SDCM to ensure that the regression steps converge within a reasonable time (see also \autoref{sssub:methodsSDCM}).
+For classification, we use the whole spectrum in the range \SIrange{410}{1002}{\nano\meter} (\emph{long}).
+Additionally, we considered the range \SIrange{410}{680}{\nano\meter} (\emph{short}) for inspection purposes.\todo{ist das wichtig?}
+Each measurement was divided by its norm $n^i$, which is particularly important for SDCM to ensure that the regression steps converge within a reasonable time.
 In the next step, divide the data into a preTraining and a validation set with a 80-20 split.
 We repeat this step until we generated a total of 25\todo{check die Zahl} preTraining and validation sets.
-The labels \textbf{Type} and \textbf{SampleID} are used as stratification variables.
+For this purpose, we use the labels \textbf{Type} and \textbf{SampleID} as stratification variables.
 
 Finally, we calculate the median of each spectral bin in the preTraining set and subtracted it from each measurement in both the preTraining and validation set.
 This centers the data at the zero level of each spectral bin.
@@ -124,28 +124,25 @@ We chose one of the following methods to generate our models:
 	\item SDCM
 	\item PCA
 \end{itemize}
-Here, spectra and spectra (no batchprocessing) describe methods where we do perform any dimension reduction on the spectral data.
-SDCM and PCA, on the other hand, do reduce the number of dimensions in the data.
+Here, spectra and spectra (no batchprocessing) describe methods where we do not perform any dimension reduction on the spectral data.
+SDCM and PCA, on the other hand, reduce the number of dimensions in the data.
 For SDCM this allows us to extract the signature strengths and weights.
 As for PCA, we can extract the principal component (PC) axes in the feature space and its coefficients in the measurement space.
 For classification, we apply this transformation once on each \emph{preTraining} set, whereas for the interpretation, we apply it once on each spectrum. 
 
-\vspace{2cm}
-For classification, to keep the number of PCs to a comparable size with the signatures in SDCM, and to achieve a reasonable dimensional reduction, we apply the following noise model: \todo{Write this once understood.}
+\textbf{For classification, to keep the number of PCs to a comparable size with the signatures in SDCM, and to achieve a reasonable dimensional reduction, we apply the following noise model: \todo{Write this once understood.}
 %We first estimated the noise by calculating the median standard deviation
 %$\text{median}_{i=1\ldotsN_f}\qty(\sigma^i)$ for a all spectral bins in the
 %input data after median subtraction. Assuming the standard deviations of the
 %spectral bins are half-norm distributed, For interpretation, we used all
 %detected PCs.
-The distribution of number of signatures found by SDCM and PCs found by PCA is shown in \autoref{fig:signatureDistribution}
+The distribution of number of signatures found by SDCM and PCs found by PCA is shown in \autoref{fig:signatureDistribution}}
 \begin{figure}[h]     
 	\centering
 	\includegraphics[width=\textwidth]{figures/signatureDistribution_10splits_99-99PCA.png}
-	\caption{Distribution of of number of SDCM signatures (left) and number of
-		PCs (right)}
+	\caption{\textbf{Distribution of of number of SDCM signatures (left) and number of PCs (right)}}
 	\label{fig:signatureDistribution}
 \end{figure}
-\vspace{2cm}
 
 Once a set of SDCM signatures has been found in the preTraining set, obtaining strengths and weights relative to these signatures for new data, i.e.
 the validation set is a non-trivial task, as the signature axes can be non-orthogonal and the method is dissecting rather than just a projection.
@@ -233,7 +230,8 @@ For each classification, a confusion matrix normalized along the rows was genera
 
 \subsection*{Data Interpretation}
 The data preprocessing for the interpretation of signatures follows essentially the same steps as in the previous subsection.
-Since we want to interpret the discovered signatures, we additionally impose the restriction that for each measurement all data labels must be provided, which reduced the number of spectral data to $1243$. Furthermore, we did not split off any validation sets.\todo{aber das hast du doch vorher auch nicht gemacht}
+Since we want to interpret the discovered signatures, we additionally impose the restriction that for each measurement all data labels must be provided, which reduced the number of spectral data to $1243$.
+Furthermore, we did not split off any validation sets.\todo{aber das hast du doch vorher auch nicht gemacht}
 \subsubsection*{SDCM}
 \label{ssub:methodsSDCM}
 SDCM (Signal Dissection by Correlation Maximisation)\cite{Grau2019} is a non-supervised algorithm for the detection of superposed correlations in high-dimensional datasets.
